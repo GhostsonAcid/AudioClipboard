@@ -63,6 +63,28 @@ Simply download the AudioClipboard.lua file, and do the following:
 
 ## Using AudioClipboard
 
-...
+### Step 1:
 
+Select mono and/or stereo audio regions that you would like to copy, and then use the "Copy Regions"  function.
 
+### Step 2:
+
+In the project snapshot you would like to paste into, select an audio track and use the "Pre-Paste Files" function.  This step ensures that all of the necessary audio source files are embedded or imported into the current session as required. _(-TIP: Always use "View File List" before pre-pasting to ensure proper file usage, and consider using the "Manually Select Files to Use" feature to redirect pasted regions to different/better sources!)_
+
+### Step 3:
+
+Select the audio track you wish to paste onto and use the "Paste Regions" function. --> Click OK and watch your regions appear! _~Done!_
+
+## How This Script Works
+
+In short, Audio Clipboard works by externally logging all relevant and available data for the copied regions into a file called "AudioClipboard.tsv" in a temporary folder offered by your computer.  Then, during Pre-Paste, it scans for already-present, usable sources, creates a local Region ID Cache (-another, more permanent .tsv file), and ultimately imports/embeds the remaining sources needed for successful pasting.  And finally, during Pasting, it then clones new audio regions into existence via IDs provided by the local cache, and utilizes the data in AudioClipboard.tsv to recreate the copied regions, with original region size, trim, position, gain, envelope, fade lengths, and other states all being preserved in the process.
+
+## Other Notes
+
+This script can be used in conjunction with Ardour's built-in track-template-creator _(-right-click on an audio mixer strip's name, then use "Save As Template...")_ to achieve full track and region duplication from one session/snapshot into another.
+
+Also, if you experience any bugs with this script, please submit an "Issue" here on GitHub, or post about it/them on the Ardour forum (discourse.ardour.org) and link @GhostsonAcid in your comment, and I will try to address it.
+
+***~Thank you and enjoy!***
+
+-J
