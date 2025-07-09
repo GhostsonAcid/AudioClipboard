@@ -1,6 +1,6 @@
 ardour {
   ["type"] = "EditorAction",
-  name = "Audio Clipboard (v1.0)",
+  name = "AudioClipboard (v1.0)",
   license = "GPL",
   author = "J.K.Lookinland & ALSA",
   description = [[     This script lets you 'copy and paste' selected mono and
@@ -33,18 +33,12 @@ function factory() return function()
     if debug then print(...) end
   end
 
-  local C = C or {}
-  C.StringVector = C.StringVector or ARDOUR.LuaAPI.CppStringVector
-
-  local Editing = Editing or LuaAPI.Editing
-  local SrcQuality = ARDOUR.SrcQuality
-
   -- Establish the location to the computer's temp. directory:
   local function get_temp_dir()
     return os.getenv("TMPDIR") or os.getenv("TEMP") or os.getenv("TMP") or "/tmp"
   end
 
-  -- Establish the path for our TSV1 (AudioClipboard.tsv):
+  -- Establish the path for our "TSV1" file (-our main 'clipboard' file, i.e. AudioClipboard.tsv):
   local tsv1_path = ARDOUR.LuaAPI.build_filename(get_temp_dir(), "AudioClipboard.tsv")
 
   -- Function to apply TSV1 entries/changes to disk:
@@ -316,7 +310,7 @@ function factory() return function()
   
   ::show_main_dialog::
 
-  local main_dialog = LuaDialog.Dialog("Audio Clipboard (v1.0)", {
+  local main_dialog = LuaDialog.Dialog("AudioClipboard (v1.0)", {
     {
       type = "dropdown",
       key = "main_action",
@@ -352,15 +346,14 @@ function factory() return function()
 
   if action == "help" then
     local part1 =
-      "                    How to use Audio Clipboard (v1.0):\n\n" ..
+      "                    How to use AudioClipboard:\n\n" ..
       "         Step 1: Select mono and/or stereo audio regions that you would like to copy, and then use the \"Copy Regions\" " ..
       " function.\n\n         Step 2: In the project snapshot you would like to paste into, select an audio track and use the " ..
       "\"Pre-Paste Files\" function.  This step ensures that all of the necessary audio source files are embedded or imported " ..
       "into the current session as required. (-TIP: Always use \"View File List\" before pre-pasting to ensure proper file usage, " ..
       "and consider using the \"Manually Select Files to Use\" feature to redirect pasted regions to different/better sources!)\n\n" ..
-      "         Step 3: Select the audio track you wish to paste onto and use the \"Paste Regions\" function.  This will then prompt " ..
-      "you to select a universal fade shape to be applied, as unfortunately original fade shape is pretty much the only info. lost " ..
-      "in this copy-paste process. --> Click OK and watch your regions appear! ~Done!\n\n\n" ..
+      "         Step 3: Select the audio track you wish to paste onto and use the \"Paste Regions\" function.  --> Click OK and watch " ..
+      "your regions appear! ~Done!\n\n\n" ..
       "                              ⚠ WARNING:\n\n" ..
       "         Due to the ways in which sources and regions are handled via this script, if \"Move relevant automation when " ..
       "audio regions are moved\" (under Preferences > Editor) is turned ON during a Pre-Paste or Paste function into an area with " ..
@@ -372,7 +365,7 @@ function factory() return function()
   
     local part2 =
       "                             How This Script Works:\n\n" ..
-      "         In short, Audio Clipboard works by externally logging all relevant and available data for the copied regions into " ..
+      "         In short, AudioClipboard works by externally logging all relevant and available data for the copied regions into " ..
       "a file called \"AudioClipboard.tsv\" in a temporary folder offered by your computer.  Then, during Pre-Paste, it scans for " ..
       "already-present, usable sources, creates a local Region ID Cache (-another, more permanent .tsv file), and ultimately imports" ..
       "/embeds the remaining sources needed for successful pasting.  And finally, during Pasting, it then clones new audio regions " ..
@@ -380,9 +373,10 @@ function factory() return function()
       "with original region size, trim, position, gain, envelope, fade lengths, and other states all being preserved in the process.\n\n" ..
       "                                    Other Notes:\n\n" ..
       "         This script can be used in conjunction with Ardour's built-in track-template-creator (-right-click on an audio mixer " ..
-      "strip's name, then use \"Save As Template...\") to acheive full track and region duplication from one session/snapshot into another.\n\n" ..
-      "         Also, if you experience any bugs with this script, please post about it/them on the Ardour forum (discourse.ardour.org) " ..
-      "and link @GhostsonAcid in your comment, and I will try to address it.  Thank you!"
+      "strip's name, then use \"Save As Template...\") to achieve full track and region duplication from one session/snapshot into another.\n\n" ..
+      "         Also, if you experience any bugs with this script, please submit an \"Issue\" on the GitHub page for AudioClipboard, " ..
+      "and/or post about it/them on the Ardour forum (discourse.ardour.org) and link @GhostsonAcid in your comment, and I will try to " ..
+      "address it. ~Thank you and enjoy!"
 
     LuaDialog.Message("Etc. (2 of 2)", part2, LuaDialog.MessageType.Info, LuaDialog.ButtonType.Close):run()
     goto show_main_dialog
@@ -426,7 +420,7 @@ function factory() return function()
       if not ar or ar:isnil() then
         LuaDialog.Message(
           "Invalid Selection!",
-          "Unfortunately MIDI notes and regions cannot be\ncopied by Audio Clipboard at this time.\n\nPlease select only mono and/or stereo audio regions.",
+          "Unfortunately MIDI notes and regions cannot be\ncopied by AudioClipboard at this time.\n\nPlease select only mono and/or stereo audio regions.",
           LuaDialog.MessageType.Warning,
           LuaDialog.ButtonType.Close
         ):run()
@@ -436,7 +430,7 @@ function factory() return function()
       if ar:n_channels() > 2 then
         LuaDialog.Message(
           "Invalid Selection!",
-          "Unfortunately regions with more than 2 channels\ncannot be copied by Audio Clipboard at this time.\n\nPlease select only mono and/or stereo audio regions.",
+          "Unfortunately regions with more than 2 channels\ncannot be copied by AudioClipboard at this time.\n\nPlease select only mono and/or stereo audio regions.",
           LuaDialog.MessageType.Warning,
           LuaDialog.ButtonType.Close
         ):run()
@@ -4034,7 +4028,7 @@ function factory() return function()
         { type = "label", title = "Currently stored entries: " .. num_entries },
         { type = "label", title = " " }, -- Spacer
         { type = "label", title = "This file contains the necessary, saved region" },
-        { type = "label", title = "IDs that Audio Clipboard uses to create regions" },
+        { type = "label", title = "IDs that AudioClipboard uses to create regions" },
         { type = "label", title = "during pasting into this snapshot specifically." },
         { type = "label", title = " " },
         { type = "label", title = "If you suspect it might be damaged," },
@@ -4335,6 +4329,13 @@ function factory() return function()
       -- So for now, we'll use this (-which so far has been 100% reliable):
       local region_ids_to_remove = {}
 
+      -- Establish a local term for creating 'vectors' of file-paths (for when using do_embed on sources):
+      local C = C or {}
+      C.StringVector = C.StringVector or ARDOUR.LuaAPI.CppStringVector
+
+      -- A shortcut to successfully access ImportMergeFiles, ImportToTrack, etc.:
+      local Editing = Editing or LuaAPI.Editing
+
       -- Initiate Import Option (IO) logic for each PP1 entry:
       for _, entry in pairs(PP1) do
 
@@ -4530,11 +4531,17 @@ function factory() return function()
 
               copy_file(pp1_entry_fsp, new_path) -- Copy the file into this session's /audiofiles/ and mutate the name to the safe name determined.
 
-              local embed = C.StringVector(); embed:push_back(new_path)
+              local embed = C.StringVector()
+              embed:push_back(new_path)
               local before_ids = snapshot_ids(playlist)
 
-              Editor:do_embed(embed, Editing.ImportAsTrack, Editing.ImportToTrack, -- Now embed it.
-                Temporal.timepos_t(pos_samples), ARDOUR.PluginInfo(), track)
+              Editor:do_embed(
+                embed,
+                Editing.ImportAsTrack,
+                Editing.ImportToTrack, -- Now embed it.
+                Temporal.timepos_t(pos_samples),
+                ARDOUR.PluginInfo(),
+                track)
 
               region, id = region_diff(before_ids, playlist:region_list())
               if not region then
@@ -4581,11 +4588,17 @@ function factory() return function()
           
                 copy_file(pp1_entry_fsp, new_path)
           
-                local embed = C.StringVector(); embed:push_back(new_path)
+                local embed = C.StringVector()
+                embed:push_back(new_path)
                 local before_ids = snapshot_ids(playlist)
 
-                Editor:do_embed(embed, Editing.ImportAsTrack, Editing.ImportToTrack,
-                  Temporal.timepos_t(pos_samples), ARDOUR.PluginInfo(), track)
+                Editor:do_embed(
+                  embed,
+                  Editing.ImportAsTrack,
+                  Editing.ImportToTrack,
+                  Temporal.timepos_t(pos_samples),
+                  ARDOUR.PluginInfo(),
+                  track)
           
                 region, id = region_diff(before_ids, playlist:region_list())
                 if not region then
@@ -4722,11 +4735,17 @@ function factory() return function()
 
             local ok, err = pcall(function()
 
-              local embed = C.StringVector(); embed:push_back(pp1_entry_fsp)
+              local embed = C.StringVector()
+              embed:push_back(pp1_entry_fsp)
               local before_ids = snapshot_ids(playlist)
 
-              Editor:do_embed(embed, Editing.ImportAsTrack, Editing.ImportToTrack,
-                Temporal.timepos_t(pos_samples), ARDOUR.PluginInfo(), track)
+              Editor:do_embed(
+                embed,
+                Editing.ImportAsTrack,
+                Editing.ImportToTrack,
+                Temporal.timepos_t(pos_samples),
+                ARDOUR.PluginInfo(),
+                track)
             
               region, id = region_diff(before_ids, playlist:region_list())
               if not region then
@@ -4758,11 +4777,17 @@ function factory() return function()
                 restart = false
           
                 -- Probe the number of channels 'manually' via do_embed:
-                local embed = C.StringVector(); embed:push_back(pp1_entry_fsp)
+                local embed = C.StringVector()
+                embed:push_back(pp1_entry_fsp)
                 local before_ids = snapshot_ids(playlist)
 
-                Editor:do_embed(embed, Editing.ImportAsTrack, Editing.ImportToTrack,
-                  Temporal.timepos_t(pos_samples), ARDOUR.PluginInfo(), track)              
+                Editor:do_embed(
+                  embed,
+                  Editing.ImportAsTrack,
+                  Editing.ImportToTrack,
+                  Temporal.timepos_t(pos_samples),
+                  ARDOUR.PluginInfo(),
+                  track)              
           
                 region, id = region_diff(before_ids, playlist:region_list())
                 if not region then
@@ -5322,7 +5347,7 @@ function factory() return function()
 
     -- Begin the reversible command, so that the whole paste can easily be undone by the user: --------------
     -- Please confirm this works!
-    Session:begin_reversible_command("Audio Clipboard Paste")
+    Session:begin_reversible_command("AudioClipboard Paste")
     playlist:to_stateful():clear_changes()
     local playlist_before = playlist:to_statefuldestructible()
 
