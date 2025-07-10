@@ -28,7 +28,7 @@ function factory() return function()
 
   -- For debugging...
   -- Set to "true" for various prints (and to activate interruption popups during pasting of compound regions):
-  local debug = false
+  local debug = true
   local function debug_print(...)
     if debug then print(...) end
   end
@@ -537,7 +537,7 @@ function factory() return function()
         { type = "label", title = "In order to copy these regions, this script must temporarily" },
         { type = "label", title = "uncombine duplicates of them to view their contents." },
         { type = "label", title = " " }, -- Spacer
-        { type = "heading", title = "⚠ Important Note:" }, -- Spacer
+        { type = "heading", title = "⚠ Important Notes:" }, -- Spacer
         { type = "label", title = " " }, -- Spacer
         { type = "label", title = "As of Ardour 8.12, manually uncombining audio regions suffers" },
         { type = "label", title = "several bugs/inadequacies.  It is therefore highly recommended" },
@@ -545,8 +545,15 @@ function factory() return function()
         { type = "label", title = "into salvaging original data (such as layering, envelope, etc.)" },
         { type = "label", title = "and reproducing accurate compound regions during pasting." },
         { type = "label", title = " " }, -- Spacer
-        { type = "label", title = "However, during pasting, double-check that any newly-pasted" },
-        { type = "label", title = "combined regions sound and look identical to the originals." },
+        { type = "label", title = "However, despite my best efforts, copying combined regions" },
+        { type = "label", title = "might still fail to recreate your original combined regions." },
+        { type = "label", title = "So, after pasting, please double-check that any recreated" },
+        { type = "label", title = "combined regions look and sound identical to the originals." },
+        { type = "label", title = "If there are any inconsistencies, then it is suggested to" },
+        { type = "label", title = "simply export and re-import whichever ones you wish to copy." },
+        { type = "label", title = " " }, -- Spacer
+        { type = "label", title = "Overall, it is recommended to avoid using combined regions" },
+        { type = "label", title = "until the developers of Ardour address their severe flaws." },
         { type = "label", title = " " } -- Final Spacer
       }
       
@@ -1043,7 +1050,7 @@ function factory() return function()
         for r in playlist:region_list():iter() do
           local id = r:to_stateful():id():to_s()
           if id == current_parent_id then
-            parent_region = r
+            parent_region = r -- Define the current parent_region (for use all throughout this function)...
             break
           end
         end
@@ -1089,6 +1096,7 @@ function factory() return function()
         -- after ANY uncombine operation upon a DUPLICATE of the parent in order to get the actual fade length/shape/etc. info!
         -- This will NOT be necessary, of course, when and if the Ardour devs add get_fade_in_length/get_fade_out_length (and hopefully more) to the bindings:
         Session:save_state("", false, false, false, false, false)
+        debug_print("--> XML Saved!")
 
         -- Capture the children:
         local current_siblings = {}
@@ -1129,7 +1137,8 @@ function factory() return function()
         debug_print("Number of current siblings:", #current_siblings)
 
         -- A function just for children (obviously), to get data on the ORIGINAL (pre-)child regions so we can ACCURATELY recreate parents...
-        -- I pray that the Ardour devs will one day fix child region recreation (via Uncombine), because developing all this was a fucking nightmare: @_____@
+        -- I pray that the Ardour devs will one day fix child region recreation (via Uncombine), because developing all this was a fucking nightmare @_____@
+        -- and it STILL fails on occasion:
         local function get_accurate_siblings_data(original_parent_name, current_siblings_total)
           local session_path = Session:path()
           local xml = io.open(ARDOUR.LuaAPI.build_filename(session_path, Session:snap_name() .. ".ardour")):read("*all")
@@ -1304,10 +1313,12 @@ function factory() return function()
             -- Now get valid, usable layering info from the original, pre-child region:
             local xml_pre_child_layering_index = "Undetermined"
             if xml_pre_child_id ~= "Undetermined" then
+              debug_print("xml_pre_child_id is NOT Undetermined.  Proceeding to finding xml_pre_child_layering_index...")
               for region_block in regions:gmatch("<Region.->") do
                 local is_nested = region_block:match("<NestedSource>") -- We need to now AVOID NestedSource ones, because those will NOT be the original (pre-)children!
                 local matches_id = region_block:match('id="' .. xml_pre_child_id .. '"')
                 if not is_nested and matches_id then
+                  debug_print("Attempting to find matching layering_index in appropriate block...")
                   xml_pre_child_layering_index = region_block:match('layering%-index="(%d+)"') or "Undetermined"
                   break
                 end
@@ -1340,8 +1351,7 @@ function factory() return function()
         end
 
         -- Prepare to accurately assess this child's parent's original_parent_name:
-        local parent_region = region_info[current_parent_id]
-        local parent_ar = parent_region and parent_region.ar
+        local parent_ar = parent_region and parent_region:to_audioregion()
         local parent_name = parent_ar and parent_ar:name() or "Undetermined"
 
         local original_parent_name = parent_name:match("(.+)%.[^%.]+$") or "Undetermined" -- NEW.
