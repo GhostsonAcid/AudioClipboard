@@ -28,7 +28,7 @@ function factory() return function()
 
   -- For debugging...
   -- Set to "true" for various prints (and to activate interruption popups during pasting of compound regions):
-  local debug = true
+  local debug = false
   local function debug_print(...)
     if debug then print(...) end
   end
@@ -704,7 +704,6 @@ function factory() return function()
         end
 
         -- 9-12. set finals as originals (-The user can change these later if manually selecting different files to use.)
-        
         final_source_location = original_source_location
         final_source_type = original_source_type
         final_io_code = original_io_code
@@ -1313,7 +1312,7 @@ function factory() return function()
             -- Now get valid, usable layering info from the original, pre-child region:
             local xml_pre_child_layering_index = "Undetermined"
             if xml_pre_child_id ~= "Undetermined" then
-              debug_print("xml_pre_child_id is NOT Undetermined.  Proceeding to finding xml_pre_child_layering_index...")
+              debug_print("xml_pre_child_id is NOT Undetermined. -Proceeding to finding xml_pre_child_layering_index...")
               for region_block in regions:gmatch("<Region.->") do
                 local is_nested = region_block:match("<NestedSource>") -- We need to now AVOID NestedSource ones, because those will NOT be the original (pre-)children!
                 local matches_id = region_block:match('id="' .. xml_pre_child_id .. '"')
@@ -2235,6 +2234,8 @@ function factory() return function()
 
       -- Process each group to conditionally ensure variants:
       for _, group in pairs(groups_by_paths) do
+
+        local seen_types = {}  -- To prevent inserting duplicate ucc & uct pairs into "types".
         local types = {}
         local any_stereo_declared = false
 
@@ -2242,7 +2243,12 @@ function factory() return function()
         for _, entry in ipairs(group) do
           local ucc = tonumber(entry.used_channel_count)
           local uct = tonumber(entry.used_channel_type)
-          table.insert(types, { ucc = ucc, uct = uct }) -- "Types" are established via ucc & uct numbers.
+          local type_key = tostring(ucc) .. "_" .. tostring(uct)
+
+          if not seen_types[type_key] then
+            seen_types[type_key] = true -- Flip to true to prevent this type from being inserted into "types" more than once.
+            table.insert(types, { ucc = ucc, uct = uct }) -- Insert the ucc & uct type.
+          end
 
           -- Check if the fst is of a stereo-nature:
           if entry.final_source_type == "Stereo" or entry.final_source_type == "DualMono" then
@@ -2277,6 +2283,7 @@ function factory() return function()
         if should_ensure then
           ensure_variants(group[1]) -- Safe to pass just the first one as a 'representative' (-we only need one entry sent to ensure_variants).
         end
+
       end
 
       --------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2922,15 +2929,12 @@ function factory() return function()
               -- Just show details from the first utewids entry in the bundle (-doesn't matter which, as the osp & fsp for each should be the same):
               local first_utewid = bundle.utewids[1]
           
-              -- Create the necessary dd-menu options/entries: ------------------------------------------------
+              -- Create the necessary dd-menu options/entries:
               for _, ufr in ipairs(bundle.ufrs) do
                 local ufr_lsp = ufr.ufr_lsp
                 if not lsp_to_ufr[ufr_lsp] then
                   lsp_to_ufr[ufr_lsp] = ufr
-                  local desc = string.format("%s (%s)", ufr_lsp, ufr.ufr_src_type)
-                  if bundle.user_task_extra[ufr_lsp] and bundle.user_task_extra[ufr_lsp] ~= "" then
-                    desc = desc .. string.format(" - Needs: %s", bundle.user_task_extra[ufr_lsp]) --------------------------------------- Should probably remove "Needs:".....
-                  end
+                  local desc = string.format("%s (Type: %s)", ufr_lsp, ufr.ufr_src_type)
                   dd_options[desc] = ufr_lsp
                 end
               end
@@ -5126,7 +5130,9 @@ function factory() return function()
         if not id_map[key] or #id_map[key] == 0 then -- Each should exist already in id_map, based on the same key.
           LuaDialog.Message(
             "Pre-Paste Required!",
-            "       At least one region source is missing.\n\nPlease Pre-Paste in this project before Pasting.",
+            "At least one region source is missing or unprepared.\n\n" ..
+            "Please use Pre-Paste before pasting, especially\n" ..
+            "if you are pasting using a redirected/new source.",
             LuaDialog.MessageType.Warning,
             LuaDialog.ButtonType.Close
           ):run()
@@ -5410,8 +5416,10 @@ function factory() return function()
               -- Preserve the header and blank lines:
               table.insert(updated_lines, line)
             else
+
               local fields = {}
-              for fields in line:gmatch("([^\t]*)\t?") do table.insert(fields, fields) end
+              for field in line:gmatch("([^\t]*)\t?") do table.insert(fields, field) end
+
               if normalize_path(fields[8]) == normalize_path(entry.original_source_path) and
                 normalize_path(fields[12]) == normalize_path(entry.final_source_path)
               then
@@ -5539,7 +5547,11 @@ function factory() return function()
         end
 
         -- Apply sync position:
-        if entry.sync_position and type(entry.sync_position) == "number" then
+        if entry.sync_position ~= entry.position_spl then -- This prevents a bug where the Sync Position was ending up (according to the Properties window of these
+                                                          -- regions) as a *negative* value, somehow, even though the sync_position and position_spl were identical.
+                                                          -- This resulted in horizontally-locked audio regions that could only be moved if their Sync Positions
+                                                          -- (green lines) were explicitly brought into view on the regions themselves.  Thus if sync_position and
+                                                          -- position_spl are equal to begin with (-the norm-), then simply don't apply it, and the bug is resolved.
           clone:set_sync_position(Temporal.timepos_t(entry.sync_position))
         end
 
@@ -5661,7 +5673,7 @@ function factory() return function()
           combined_audio_region:set_opaque(entry.opaque_state == "Opaque")
           combined_audio_region:set_locked(entry.lock_state == "Locked")
 
-          if entry.sync_position then
+          if entry.sync_position ~= entry.position_spl then -- Prevents a bug, as mentioned prior. --------------
             combined_audio_region:set_sync_position(Temporal.timepos_t(entry.sync_position))
           end
 
