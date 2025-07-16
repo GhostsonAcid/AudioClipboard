@@ -11,7 +11,7 @@ ardour {
                                  (2025-07-06)]]
 }
 
--- A custom clipboard icon:
+-- Draw a custom clipboard icon:
 function icon(params) return function(ctx, width, height, fg)
   local wh = math.min(width, height)
   ctx:set_source_rgba(ARDOUR.LuaAPI.color_to_rgba(fg))
@@ -27,10 +27,28 @@ end end
 function factory() return function()
 
   -- For debugging...
-  -- Set to "true" for various prints (and to activate interruption popups during pasting of compound regions):
-  local debug = false
+  -- Set to true for various prints:
+  local debug = true
   local function debug_print(...)
     if debug then print(...) end
+  end
+
+   -- Toggle this to enable/disable pauses between processing "steps", and during pasting of compound regions:
+  local debug_pause = true
+
+  -- Establish a function to pause the script and show a popup:
+  function debug_pause_popup(step) -- Feed it some "step" string to insert some text about the current step that just completed.
+    local popup = LuaDialog.Dialog("Interruption Popup...", {
+      { type = "label", title = "This processing step has now completed:" },
+      { type = "heading", title = tostring(step) }
+    })
+
+    local result = popup:run()
+    if not result then
+      return true -- User hit Close (-will stop the script).
+    else
+      return false -- User hit OK (-will continue).
+    end
   end
 
   -- Establish the location to the computer's temp. directory:
@@ -397,6 +415,8 @@ function factory() return function()
     ------------------------- Copy STEP 0: Initial Checks/Guards -------------------------
     --------------------------------------------------------------------------------------
 
+    debug_print("-------------- Copy STEP 0: Initial Checks/Guards --------------")
+
     -- Check if anything is selected:
     if not region_list or region_list:empty() then
       LuaDialog.Message(
@@ -481,9 +501,13 @@ function factory() return function()
       end
     end
 
+    if debug_pause and debug_pause_popup("Copy STEP 0: Initial Checks/Guards") then return end
+
     -----------------------------------------------------------------------------------------------------------------------------------------------
     ------------------------- Copy STEP 1: Manifest/Erase TSV1, Sort the Selected Regions, and Check for Compound Regions -------------------------
     -----------------------------------------------------------------------------------------------------------------------------------------------
+
+    debug_print("-------------- Copy STEP 1: Manifest/Erase TSV1, Sort the Selected Regions, and Check for Compound Regions --------------")
 
     -- Manifest/erase TSV1 (AudioClipboard.tsv)...
     -- Good to do this AFTER initial checks just in case someone used Copy Regions (in Session B) when they meant to use Paste Regions:
@@ -569,10 +593,14 @@ function factory() return function()
       end
       
     end
-    
+
+    if debug_pause and debug_pause_popup("Copy STEP 1: Manifest/Erase TSV1, Sort the Selected Regions, and Check for Compound Regions") then return end
+
     ----------------------------------------------------------------------------------------------------------------------------
     ------------------------- Copy STEP 2: Establish Our Main, TSV1 Entry Base-Info-Gathering Function -------------------------
     ----------------------------------------------------------------------------------------------------------------------------
+
+    debug_print("-------------- Copy STEP 2: Establish Our Main, TSV1 Entry Base-Info-Gathering Function --------------")
 
     -- And now one, massive function for determining fields 1-33 (-the 'base'-) for each TSV1 entry:
     local function get_tsv1_entry_base_info(r, ar, is_child_region) -- Added this is_child_region flag for moar interrigent handling...
@@ -870,9 +898,13 @@ function factory() return function()
         original_id -- 33
     end
 
+    if debug_pause and debug_pause_popup("Copy STEP 2: Establish Our Main, TSV1 Entry Base-Info-Gathering Function") then return end
+
     --------------------------------------------------------------------------------------------
     ------------------------- Copy STEP 3: Initiate the Main Copy Loop -------------------------
     --------------------------------------------------------------------------------------------
+
+    debug_print("-------------- Copy STEP 3: Initiate the Main Copy Loop --------------")
 
     local parent_regions_layer_0 = {}  -- Ordered list of first/top-level compound region IDs, if present.
 
@@ -999,9 +1031,13 @@ function factory() return function()
       ::skip::
     end
 
+    if debug_pause and debug_pause_popup("Copy STEP 3: Initiate the Main Copy Loop") then return end
+
     ------------------------------------------------------------------------------------------------------------------------------------------
     ------------------------- Copy STEP 4: Prepare for Additional Looping (for Any Compound/Combined/Parent-Regions) -------------------------
     ------------------------------------------------------------------------------------------------------------------------------------------
+
+    debug_print("-------------- Copy STEP 4: Prepare for Additional Looping (for Any Compound/Combined/Parent-Regions) --------------")
 
     local need_children_of_layer = {}
     local tsv1_entries_by_layer = {}
@@ -1521,9 +1557,13 @@ function factory() return function()
       end
     end
 
+    if debug_pause and debug_pause_popup("Copy STEP 4: Prepare for Additional Looping (for Any Compound/Combined/Parent-Regions") then return end
+
     --------------------------------------------------------------------------------------------------------------------------------------------
     ------------------------- Copy STEP 5: Initiate Additional Copy Loop(s) (for Any Compound/Combined/Parent-Regions) -------------------------
     --------------------------------------------------------------------------------------------------------------------------------------------
+
+    debug_print("-------------- Copy STEP 5: Initiate Additional Copy Loop(s) (for Any Compound/Combined/Parent-Regions) --------------")
 
     -- Layer0 is the 'topmost'/'surface' compound_layer...
     -- Layer1 is the next layer in...
@@ -1590,10 +1630,13 @@ function factory() return function()
       child_layer = child_layer + 1
     end
 
+    if debug_pause and debug_pause_popup("Copy STEP 5: Initiate Additional Copy Loop(s) (for Any Compound/Combined/Parent-Regions)") then return end
+
     -------------------------------------------------------------------------------------------------------------
     ------------------------- Copy STEP 6: Finalize TSV1 and Alert the User Accordingly -------------------------
     -------------------------------------------------------------------------------------------------------------
 
+    debug_print("-------------- Copy STEP 6: Finalize TSV1 and Alert the User Accordingly --------------")
 
     -- Write final entries to AudioClipboard.tsv:
     if siblings_manifested then
@@ -1673,6 +1716,8 @@ function factory() return function()
       end
     end
 
+    if debug_pause and debug_pause_popup("Copy STEP 6: Finalize TSV1 and Alert the User Accordingly") then return end
+    
   end -- Ends "if action == "copy" then".
 
   -----------------------------------------------------------------------------------------------------------------------------
@@ -1693,6 +1738,8 @@ function factory() return function()
     -----------------------------------------------------------------------------------------------------
     ------------------------- Pre-Paste STEP 0: Erase TSV 2 Entries With No IDs -------------------------
     -----------------------------------------------------------------------------------------------------
+
+    debug_print("-------------- Pre-Paste STEP 0: Erase TSV 2 Entries With No IDs --------------")
 
     -- If 'mis-copying' something, running Pre-Paste and then canceling, this ensures that any unwanted entries don't keep reappearing during later Pre-Pasting.
     -- This must be kept BEFORE ::restart_prepaste:: so any manual source changes (during "manselect" or Wizard) aren't immediately erased from TSV 2.
@@ -1753,11 +1800,15 @@ function factory() return function()
       end
     end
 
+    if debug_pause and debug_pause_popup("Pre-Paste STEP 0: Erase TSV 2 Entries With No IDs") then return end
+
     ------------------------------------------------------------------------------------------------------------------------------------------------
     ------------------------- Pre-Paste STEP 1: Define More Functions, Load TSVs, and Update TSV1 via TSV2 (if they exist) -------------------------
     ------------------------------------------------------------------------------------------------------------------------------------------------
 
     ::restart_prepaste::
+
+    debug_print("-------------- Pre-Paste STEP 1: Define More Functions, Load TSVs, and Update TSV1 via TSV2 (if they exist) --------------")
 
     -- Load existing TSV2 entries (if any):
     local tsv2_entries = {}
@@ -2143,9 +2194,16 @@ function factory() return function()
       -- Apply updated entries to TSV1 via our flush_tsv1 function:
       flush_tsv1(tsv1_updated_lines)
 
+      if debug_pause then
+        flush_tsv2()
+        if debug_pause_popup("Pre-Paste STEP 1: Define More Functions, Load TSVs, and Update TSV1 via TSV2 (if they exist)") then return end
+      end
+
       --------------------------------------------------------------------------------------------------------------
       ------------------------- Pre-Paste STEP 2: Ensure TSV 2 Entries Exist and are Ready -------------------------
       --------------------------------------------------------------------------------------------------------------
+
+      debug_print("-------------- Pre-Paste STEP 2: Ensure TSV 2 Entries Exist and are Ready --------------")
 
       -- Load (newest) TSV 1 entries for further use:
       local tsv1_entries = {}
@@ -2218,9 +2276,16 @@ function factory() return function()
         end
       end
 
+      if debug_pause then
+        flush_tsv2()
+        if debug_pause_popup("Pre-Paste STEP 2: Ensure TSV 2 Entries Exist and are Ready") then return end
+      end
+
       --------------------------------------------------------------------------------------------------------------------------------
       ------------------------- Pre-Paste STEP 3: Ensure As Many Entry Trios In TSV2 as (currently) possible -------------------------
       --------------------------------------------------------------------------------------------------------------------------------
+
+      debug_print("-------------- Pre-Paste STEP 3: Ensure As Many Entry Trios In TSV2 as (currently) possible --------------")
 
       -- Attempt to ensure variant entries in TSV2 where appropriate:
       local groups_by_paths = {}
@@ -2286,9 +2351,16 @@ function factory() return function()
 
       end
 
+      if debug_pause then
+        flush_tsv2()
+        if debug_pause_popup("Pre-Paste STEP 3: Ensure As Many Entry Trios In TSV2 as (currently) possible") then return end
+      end
+
       --------------------------------------------------------------------------------------------------------------------------------------------------
       ------------------------- Pre-Paste STEP 4: Sync/share (re)Usable IDs, LSPs, and Final Source Types Amongst TSV2 Entries -------------------------
       --------------------------------------------------------------------------------------------------------------------------------------------------
+
+      debug_print("-------------- Pre-Paste STEP 4: Sync/share (re)Usable IDs, LSPs, and Final Source Types Amongst TSV2 Entries --------------")
 
       -- Group TSV2 entries by {ucc, uct, fsp}:
       local sync_groups = {}
@@ -2353,9 +2425,16 @@ function factory() return function()
         end
       end
 
+      if debug_pause then
+        flush_tsv2()
+        if debug_pause_popup("Pre-Paste STEP 4: Sync/share (re)Usable IDs, LSPs, and Final Source Types Amongst TSV2 Entries") then return end
+      end
+
       --------------------------------------------------------------------------------------------------------------------------------
       ------------------------- Pre-Paste STEP 5: Scan Current Region Playlists to Salvage Usable Region IDs -------------------------
       --------------------------------------------------------------------------------------------------------------------------------
+
+      debug_print("-------------- Pre-Paste STEP 5: Scan Current Region Playlists to Salvage Usable Region IDs --------------")
 
       local found_regions = {}
 
@@ -2496,12 +2575,13 @@ function factory() return function()
         if not entry.IDs or #entry.IDs == 0 then
           for _, tsv1_line in ipairs(tsv1_entries) do
             local tsv1_os = tsv1_line.origin_session
-            local tsv1_fsp = normalize_path(tsv1_line.final_source_path or "")
+            local tsv1_osp = normalize_path(tsv1_line.original_source_path or "") ---------------------------------------------
             local tsv1_ucc = tonumber(tsv1_line.used_channel_count)
             local tsv1_uct = tonumber(tsv1_line.used_channel_type)
             local original_id = tsv1_line.original_id
-            -- Confirm a match here based on origin_session = local_session, and then fsp, ucc, and uct matches:
-            if tsv1_os == tsv2_ls and tsv1_fsp == tsv2_fsp and tsv1_ucc == tsv2_ucc and tsv1_uct == tsv2_uct then
+            -- Confirm a match here based on origin_session = local_session, and then osp & fsp, ucc, and uct matches: ---------------------------------------------
+            if tsv1_os == tsv2_ls and tsv1_osp == tsv2_fsp and tsv1_ucc == tsv2_ucc and tsv1_uct == tsv2_uct then -- If the copied region's osp doesn't match the given TSV2 entry's
+                                                                                                                  -- fsp, then manselect must have been used, thus don't match here.
               entry.IDs = { original_id } -- Set original_id to the IDs field.
               line[13] = tsv2_fsp -- Write tsv2_fsp into local_source_path.
               debug_print("Injected original_id based on session match:", original_id)
@@ -2511,13 +2591,16 @@ function factory() return function()
         end
       end
 
-      -- Finalize TSV2 update
+      -- Apply the results to TSV2:
       flush_tsv2()
-      debug_print(string.format("Step 4: TSV 2 updated with live region IDs -> %d entries processed.", #tsv2_entries))
+
+      if debug_pause and debug_pause_popup("Pre-Paste STEP 5: Scan Current Region Playlists to Salvage Usable Region IDs") then return end
 
       -----------------------------------------------------------------------------------------------------------------------------
       ------------------------- Pre-Paste STEP 6: Detect Remaining Entries with Placeholder IDs ("00000") -------------------------
       -----------------------------------------------------------------------------------------------------------------------------
+
+      debug_print("-------------- Pre-Paste STEP 6: Detect Remaining Entries with Placeholder IDs (\"00000\") --------------")
 
       -- Updated function to derive a normalized name ("nn") from a full path (-for establishing potential matches)...
       -- Used here, and in 'Source Finder Wizard' (-the next Pre-Paste "Step"):
@@ -2551,16 +2634,6 @@ function factory() return function()
 
       -- Just before Wizard, scan tsv2_entries to see if any 00000 IDs remain:
       for _, entry in pairs(tsv2_entries) do
-
-        if entry.IDs == nil then
-          debug_print("⚠ entry.IDs is nil for entry with nn:", get_nn(entry.line[8]))
-        else
-          debug_print("Entry has IDs:", table.concat(entry.IDs, ", "))
-          for _, id in ipairs(entry.IDs) do
-            debug_print("Raw ID value:", tostring(id), " | Match with '00000':", tostring(id) == "00000")
-          end
-        end
-
         for _, id in ipairs(entry.IDs) do
           if id == "00000" then
             local line = entry.line
@@ -2610,6 +2683,8 @@ function factory() return function()
         return -- Break out of Pre-Paste so the user can fulfill their side of the "bargain". o___o
       end
 
+      if debug_pause and debug_pause_popup("Pre-Paste STEP 6: Detect Remaining Entries with Placeholder IDs (\"00000\")") then return end
+
       -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
       ------------------------- Pre-Paste STEP 7: 'Source Finder Wizard'; Automatically Find Potential Source Matches and Present Them to the User --------------------------
       -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2618,7 +2693,11 @@ function factory() return function()
       -- Good-luck!
 
       -- If this section already ran, then it won't run again (unless the user specifically wanted it to via the dd-menu in the main Pre-Paste window):
-      if not skip_wizard then
+      if skip_wizard then
+        debug_print("--> Skipping Pre-Paste STEP 7: 'Source Finder Wizard'...")
+      else
+
+        debug_print("-------------- Pre-Paste STEP 7: 'Source Finder Wizard'; Automatically Find Potential Source Matches and Present Them to the User --------------")
 
         ----------------------------------- Wizard, Step 1/10: Build unique_tsv2_entries_without_ids -----------------------------------
 
@@ -3238,12 +3317,17 @@ function factory() return function()
           goto restart_prepaste -- Restart Pre-Paste; Pre-Paste Step 5 should now automatically find and apply usable IDs to the approved matches!
 
         end -- Ends "if #final_user_approvals > 0 then".
-      end -- Ends "if not skip_wizard then".
+
+        if debug_pause and debug_pause_popup("Pre-Paste STEP 7: 'Source Finder Wizard'; Automatically Find Potential Source Matches and Present Them to the User") then return end
+
+      end -- Ends "if skip_wizard then ... else".
     end -- Ends "if not skip_steps then".
 
     -------------------------------------------------------------------------------------------------------------
     ------------------------- Pre-Paste STEP 8: Build PP1 Table of Unique TSV 1 Entries -------------------------
     -------------------------------------------------------------------------------------------------------------
+
+    debug_print("-------------- Pre-Paste STEP 8: Build PP1 Table of Unique TSV 1 Entries --------------")
 
     -- Build a thinned PP1_map table from TSV1 entries:
     local PP1_map = {}  -- Key used = osp|fsp.
@@ -3380,9 +3464,13 @@ function factory() return function()
       end
     end
 
+    if debug_pause and debug_pause_popup("Pre-Paste STEP 8: Build PP1 Table of Unique TSV 1 Entries") then return end
+
     -------------------------------------------------------------------------------------------------------------------------------------------
     ------------------------- Pre-Paste STEP 9: Detect and Alert the User About Any Potential Legacy Reversed Regions -------------------------
     -------------------------------------------------------------------------------------------------------------------------------------------
+
+    debug_print("-------------- Pre-Paste STEP 9: Detect and Alert the User About Any Potential Legacy Reversed Regions --------------")
 
     -- Additional legacy reversed-region check for potential -0.wav/-1.wav pairs:
     local legacy_reversed_paths = {}
@@ -3438,9 +3526,13 @@ function factory() return function()
     -- Save PP1 for Step 11 (Import Option (IO) processing):
     _G.PP1_STATE = PP1
 
+    if debug_pause and debug_pause_popup("Pre-Paste STEP 9: Detect and Alert the User About Any Potential Legacy Reversed Regions") then return end
+
     --------------------------------------------------------------------------------------------------------------------------------
     ------------------------- Pre-Paste STEP 10: Initiate the Main Pre-Paste Window and All Other Submenus -------------------------
     --------------------------------------------------------------------------------------------------------------------------------
+
+    debug_print("-------------- Pre-Paste STEP 10: Initiate the Main Pre-Paste Window and All Other Submenus --------------")
 
     -- Establish some simple counters for the main Pre-Paste window:
     local count_embed = 0
@@ -4071,12 +4163,16 @@ function factory() return function()
       return  
     end
 
+    if debug_pause and debug_pause_popup("Pre-Paste STEP 10: Initiate the Main Pre-Paste Window and All Other Submenus") then return end
+
     ---------------------------------------------------------------------------------------------
     ------------------------- Pre-Paste STEP 11: Initiate IO-Processing -------------------------
     ---------------------------------------------------------------------------------------------
 
     -- Proceed only if chosen to via "Option 1" in the main Pre-Paste window:
     if user_choice ~= "proceed" then return end
+
+      debug_print("-------------- Pre-Paste STEP 11: Initiate IO-Processing --------------")
 
       -- Initial check if TSV1 was/is empty or not:
       if not found_valid_tsv1_data then
@@ -4919,9 +5015,13 @@ function factory() return function()
 
       end -- Ends our main IO-Processing loop, i.e. "for _, entry in pairs(PP1) do".
 
+      if debug_pause and debug_pause_popup("Pre-Paste STEP 11: Initiate IO-Processing") then return end
+
       ---------------------------------------------------------------------------------------------------------------------------------------------------------
       ------------------------- Pre-Paste STEP 12: Save the IO-Processing Results, Message the User, and Delete Any Temporary Regions -------------------------
       ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+      debug_print("-------------- Pre-Paste STEP 12: Save the IO-Processing Results, Message the User, and Delete Any Temporary Regions --------------")
 
       -- 'Flush' the updated entries (in tsv2_entries) back to the actual TSV2 file:
       flush_tsv2()
@@ -4962,6 +5062,8 @@ function factory() return function()
         end
       end
 
+    if debug_pause and debug_pause_popup("Pre-Paste STEP 12: Save the IO-Processing Results, Message the User, and Delete Any Temporary Regions") then return end
+
     return
 
   end -- Ends "if action == "prepaste" then".
@@ -4981,6 +5083,8 @@ function factory() return function()
     ---------------------------------------------------------------------------------------
     ------------------------- Paste STEP 0: Initial Checks/Guards -------------------------
     ---------------------------------------------------------------------------------------
+
+    debug_print("-------------- Paste STEP 0: Initial Checks/Guards --------------")
 
     -- Guard: make sure TSV 1 exists:
     local f1 = io.open(tsv1_path, "r")
@@ -5023,9 +5127,13 @@ function factory() return function()
       return
     end
 
+    if debug_pause and debug_pause_popup("Paste STEP 0: Initial Checks/Guards") then return end
+
     ------------------------------------------------------------------------------------
     ------------------------- Paste STEP 1: Load the TSV Files -------------------------
     ------------------------------------------------------------------------------------
+
+    debug_print("-------------- Paste STEP 1: Load the TSV Files --------------")
 
     -- Load TSV1 into a temp. table:
     local clipboard = {}
@@ -5114,9 +5222,13 @@ function factory() return function()
       tsv2_file_read:close()
     end
 
+    if debug_pause and debug_pause_popup("Paste STEP 1: Load the TSV Files") then return end
+
     -----------------------------------------------------------------------------------------------------------------
     ------------------------- Paste STEP 2: Check if TSV Information is Likely Usable/Valid -------------------------
     -----------------------------------------------------------------------------------------------------------------
+
+    debug_print("-------------- Paste STEP 2: Check if TSV Information is Likely Usable/Valid --------------")
 
     -- Pre-check: every TSV1 entry must have a (likely) usable TSV2 match:
     for i, entry in ipairs(clipboard) do
@@ -5229,9 +5341,13 @@ function factory() return function()
       return
     end
 
+    if debug_pause and debug_pause_popup("Paste STEP 2: Check if TSV Information is Likely Usable/Valid") then return end
+
     -------------------------------------------------------------------------------------------------------------------------
     ------------------------- Paste STEP 3: Alert the User About Legacy or Undetermined Fade Shapes -------------------------
     -------------------------------------------------------------------------------------------------------------------------
+
+    debug_print("-------------- Paste STEP 3: Alert the User About Legacy or Undetermined Fade Shapes --------------")
 
     -- Scan for "Legacy" fades that were successfully converted (i.e. where shape does NOT = "Undetermined")...
     -- Also, check for any "Undetermined" fade shapes:
@@ -5303,9 +5419,13 @@ function factory() return function()
 
     -- All pre-checks passed! CONGLATURATION ! ! !
 
+    if debug_pause and debug_pause_popup("Paste STEP 3: Alert the User About Legacy or Undetermined Fade Shapes") then return end
+
     -----------------------------------------------------------------------------------------------
     ------------------------- Paste STEP 4: Define Any Remaining Fuctions -------------------------
     -----------------------------------------------------------------------------------------------
+
+    debug_print("-------------- Paste STEP 4: Define Any Remaining Fuctions --------------")
 
     -- A function to combine siblings of a group into their parent (compound) region:
     function combine_siblings(playlist, track, layer_id, siblings_by_layer)
@@ -5357,9 +5477,13 @@ function factory() return function()
       end
     end
 
+    if debug_pause and debug_pause_popup("Paste STEP 4: Define Any Remaining Fuctions") then return end
+
     -----------------------------------------------------------------------------------------------------------------
     ------------------------- Paste STEP 5: Initiate the Main Paste Loop and Clone Handling -------------------------
     -----------------------------------------------------------------------------------------------------------------
+
+    debug_print("-------------- Paste STEP 5: Initiate the Main Paste Loop and Clone Handling --------------")
 
     -- Begin the reversible command, so that the whole paste can easily be undone by the user: --------------
     -- Please confirm this works!
@@ -5456,6 +5580,7 @@ function factory() return function()
           debug_print("No valid source for clone.")
           goto continue -- Again, skip this one because something went seriously wrong...
         end
+
         local full_len = src:length():samples()
         clone:set_start(Temporal.timepos_t(0))
         clone:set_length(Temporal.timecnt_t(full_len))
@@ -5621,6 +5746,8 @@ function factory() return function()
       -- In this second portion, only process TSV1 entries that ARE parents (i.e. compound/combined regions):
       elseif entry.is_compound_parent == "Parent" then
 
+        debug_print("-------------- Paste STEP 6: Initiate Any Compound/Combined/Parent-Region Handling --------------")
+
         if latest_combined_parent then -- Check that the latest_combined_parent exists and is valid.
 
           local combined_audio_region = latest_combined_parent:to_audioregion()
@@ -5723,12 +5850,19 @@ function factory() return function()
           divert_to_combine_siblings = false
 
         end
+
+        if debug_pause and debug_pause_popup("Paste STEP 6: Initiate Any Compound/Combined/Parent-Region Handling") then return end
+
       end
-    end -- Ends "for i, entry in ipairs(clipboard) do", our main Paste Logic loop!
+    end -- Ends "for i, entry in ipairs(clipboard) do", -our main Paste Logic loop!
+
+    if debug_pause and debug_pause_popup("Paste STEP 5: Initiate the Main Paste Loop and Clone Handling") then return end
 
     -----------------------------------------------------------------------------------------------------------
     ------------------------- Paste STEP 7: Finalize and Conclude The Pasting Process -------------------------
     -----------------------------------------------------------------------------------------------------------
+
+    debug_print("-------------- Paste STEP 7: Finalize and Conclude The Pasting Process --------------")
 
     -- Commit the playlist changes:
     local playlist_after = playlist:to_statefuldestructible()
@@ -5755,7 +5889,7 @@ function factory() return function()
         string.format(
           "%d regions pasted successfully!\n\n\n\n" ..
           "     CONGLATURATION  ! ! !\n\n    YOU HAVE COMPLETED\n          A GREAT PASTE.", -- Keeping this BS shorter.
-          -- "AND PROOVED THE JUSTICE\n        OF OUR CULTURE.\n\n    NOW GO AND REST OUR\n                HEROES  !",
+          --"AND PROOVED THE JUSTICE\n        OF OUR CULTURE.\n\n    NOW GO AND REST OUR\n                HEROES  !",
           pasted
         ),
         LuaDialog.MessageType.Info,
@@ -5765,6 +5899,8 @@ function factory() return function()
     else
       debug_print("Pasting Failed! :(")
     end
+
+    if debug_pause and debug_pause_popup("Paste STEP 7: Finalize and Conclude The Pasting Process") then return end
 
     return
 
