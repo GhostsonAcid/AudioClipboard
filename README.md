@@ -7,7 +7,7 @@ AudioClipboard (AudioClipboard.lua) is a script designed to be run in the Ardour
 ## Features:
 
 - Works with audio regions, mono and stereo.
-- Easy to use, 3-step process: Copy ➝ Pre-Paste ➝ Paste ✅
+- Easy to use, 3-step process: Copy ➝ Pre-Paste ➝ Paste
 - Pasted regions retain all original position, trim, envelope, gain, fade length/shape data, etc..
 - Avoids most re-embedding or re-importing of files already present in the project during Pasting.
 - By default, original relationships to source materials are preserved almost 1:1, but there's also...
@@ -19,7 +19,7 @@ AudioClipboard (AudioClipboard.lua) is a script designed to be run in the Ardour
 - The Paste action is an undoable command (via ctrl-Z/cmd-Z, etc.).
 - File-collisions and accidental erasures are prevented behind the scenes via simple file-name checks.
 - Legacy Dual-Mono stereo pairs (with -L/-R endings) are automatically modernized during pre-paste by renaming them with standard (%L/%R) endings.
-- Under GPL, thus: 100% free to use, copy, alter, distribute, etc., etc... 👍
+- Under GPL, thus: 100% free to use, copy, alter, distribute, etc., etc...
 
 ## Known Limitations:
 
@@ -27,9 +27,8 @@ AudioClipboard (AudioClipboard.lua) is a script designed to be run in the Ardour
 - It doesn't work with audio regions/sources with more than 2 channels.
 - It sometimes fails to properly handle combined/compound regions due to known Ardour bugs.
 
-## ⚠️ Warning:
-
-- AudioClipboard has the potential to disturb/destroy automation curves (plugin/fader/pan/etc.) on a track if the setting _"Move relevant automation when audio regions are moved"_ (under Preferences -> Editor) is NOT disabled during Pre-Pasting/Pasting.  ***So PLEASE be sure to DISABLE that setting BEFORE using AudioClipboard.***
+> [!WARNING]
+> AudioClipboard has the potential to disturb/destroy automation curves (plugin/fader/pan/etc.) on a track if the setting _"Move relevant automation when audio regions are moved"_ (under Preferences -> Editor) is NOT disabled during Pre-Pasting/Pasting.  ***So PLEASE be sure to DISABLE that setting BEFORE using AudioClipboard.***
 
 ## Installation:
 
@@ -69,7 +68,10 @@ Select mono and/or stereo audio regions that you would like to copy, and then us
 
 ### Step 2:
 
-In the project snapshot you would like to paste into, select an audio track and use the "Pre-Paste Files" function.  This step ensures that all of the necessary audio source files are embedded or imported into the current session as required. _(-TIP: Always use "View File List" before pre-pasting to ensure proper file usage, and consider using the "Manually Select Files to Use" feature to redirect pasted regions to different/better sources!)_
+In the project snapshot you would like to paste into, select an audio track and use the "Pre-Paste Files" function.  This step ensures that all of the necessary audio source files are embedded or imported into the current session as required.
+
+> [!TIP]
+> Always use "View File List" before pre-pasting to ensure proper file usage, and consider using the "Manually Select Files to Use" feature to redirect pasted regions to different/better sources.
 
 ### Step 3:
 
