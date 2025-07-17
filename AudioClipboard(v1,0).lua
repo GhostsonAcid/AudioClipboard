@@ -26,30 +26,38 @@ end end
 
 function factory() return function()
 
-  -- For debugging...
-  -- Set to true for various prints:
+  -----------------------------------------------------------------
+  ------------------------- Debug Helpers -------------------------
+  -----------------------------------------------------------------
+
+  -- Set to true for various debug prints:
   local debug = true
   local function debug_print(...)
     if debug then print(...) end
   end
 
-   -- Toggle this to enable/disable pauses between processing "steps", and during pasting of compound regions:
+  -- Set to true to enable pauses between processing "steps" (and during pasting of compound regions)...
+  -- This is very helpful in pinpointing a step where an improper mutation of TSV1 or TSV2 is occuring:
   local debug_pause = true
 
   -- Establish a function to pause the script and show a popup:
   function debug_pause_popup(step) -- Feed it some "step" string to insert some text about the current step that just completed.
     local popup = LuaDialog.Dialog("Interruption Popup...", {
       { type = "label", title = "This processing step has now completed:" },
-      { type = "heading", title = tostring(step) }
+      { type = "heading", title = tostring(step) } -- Show the step that just completed.
     })
 
     local result = popup:run()
     if not result then
-      return true -- User hit Close (-will stop the script).
+      return true -- User hit Close; this will stop the script.
     else
-      return false -- User hit OK (-will continue).
+      return false -- User hit OK; this will allow the script to continue as normal.
     end
   end
+
+  --------------------------------------------------------------------------------------
+  ------------------------- Establish Global & Early Functions -------------------------
+  --------------------------------------------------------------------------------------
 
   -- Establish the location to the computer's temp. directory:
   local function get_temp_dir()
@@ -316,9 +324,9 @@ function factory() return function()
     return fade_length, shape, is_legacy
   end
 
-  --------------------------------------------------------------------------------------------------------------------------------
-  ------------------------------------------------------- OPENING WINDOW ---------------------------------------------------------
-  --------------------------------------------------------------------------------------------------------------------------------
+  ------------------------------------------------------------------
+  ------------------------- Opening Window -------------------------
+  ------------------------------------------------------------------
 
   -- Immediately stop the transport if it is rolling/playing...
   -- This (presumably) reduces potential crashing/issues if trying to use do_import/do_embed during Pre-Paste, or trying to uncombine regions during copying, etc.:
@@ -1031,7 +1039,10 @@ function factory() return function()
       ::skip::
     end
 
-    if debug_pause and debug_pause_popup("Copy STEP 3: Initiate the Main Copy Loop") then return end
+    if debug_pause then
+      flush_tsv1(tsv1_entries)
+      if debug_pause_popup("Copy STEP 3: Initiate the Main Copy Loop") then return end
+    end
 
     ------------------------------------------------------------------------------------------------------------------------------------------
     ------------------------- Copy STEP 4: Prepare for Additional Looping (for Any Compound/Combined/Parent-Regions) -------------------------
@@ -1630,7 +1641,10 @@ function factory() return function()
       child_layer = child_layer + 1
     end
 
-    if debug_pause and debug_pause_popup("Copy STEP 5: Initiate Additional Copy Loop(s) (for Any Compound/Combined/Parent-Regions)") then return end
+    if debug_pause then
+      flush_tsv1(tsv1_entries)
+      if debug_pause_popup("Copy STEP 5: Initiate Additional Copy Loop(s) (for Any Compound/Combined/Parent-Regions)") then return end
+    end
 
     -------------------------------------------------------------------------------------------------------------
     ------------------------- Copy STEP 6: Finalize TSV1 and Alert the User Accordingly -------------------------
@@ -1716,7 +1730,7 @@ function factory() return function()
       end
     end
 
-    if debug_pause and debug_pause_popup("Copy STEP 6: Finalize TSV1 and Alert the User Accordingly") then return end
+    if debug_pause then debug_pause_popup("Copy STEP 6: Finalize TSV1 and Alert the User Accordingly") end
     
   end -- Ends "if action == "copy" then".
 
@@ -5062,7 +5076,7 @@ function factory() return function()
         end
       end
 
-    if debug_pause and debug_pause_popup("Pre-Paste STEP 12: Save the IO-Processing Results, Message the User, and Delete Any Temporary Regions") then return end
+    if debug_pause then debug_pause_popup("Pre-Paste STEP 12: Save the IO-Processing Results, Message the User, and Delete Any Temporary Regions") end
 
     return
 
@@ -5900,7 +5914,7 @@ function factory() return function()
       debug_print("Pasting Failed! :(")
     end
 
-    if debug_pause and debug_pause_popup("Paste STEP 7: Finalize and Conclude The Pasting Process") then return end
+    if debug_pause then debug_pause_popup("Paste STEP 7: Finalize and Conclude The Pasting Process") end
 
     return
 
