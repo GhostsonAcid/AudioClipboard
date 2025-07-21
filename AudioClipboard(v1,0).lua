@@ -31,16 +31,16 @@ function factory() return function()
   -----------------------------------------------------------------
 
   -- Set to true for various debug prints:
-  local debug = true
+  local debug = false
   local function debug_print(...)
     if debug then print(...) end
   end
 
   -- Set to true to enable pauses between processing "steps" (and during pasting of compound regions)...
   -- This is very helpful in pinpointing a step where an improper mutation of TSV1 or TSV2 is occuring:
-  local debug_pause = true
+  local debug_pause = false
 
-  -- Establish a function to pause the script and show a popup:
+  -- Establish the function that will show a interruption popup:
   function debug_pause_popup(step) -- Feed it some "step" string to insert some text about the current step that just completed.
     local popup = LuaDialog.Dialog("Interruption Popup...", {
       { type = "label", title = "This processing step has now completed:" },
@@ -55,7 +55,62 @@ function factory() return function()
     end
   end
 
-  --------------------------------------------------------------------------------------
+  ----------------------------------------------------------------------------
+  ------------------------- Future Development Notes -------------------------
+  --[[ -----------------------------------------------------------------------
+    
+  It's worth noting several improvements that could potentially be made to this script in the future (-or in the past, if you have a time machine):
+
+  1. Due to a current lack of bindings for getting audio region fade lengths and shapes (e.g. 'get_fade_in_length', 'get_fade_out_shape', etc.)
+     this script currently scans the snapshot XML (.ardour) file itself to acquire (and infer) such information.  This approach has admittedly been quite
+     clever, but nevertheless cumbersome and prone to potential parsing errors.  Thus, if such bindings are ever made available, this XML-scanning code can
+     and should(?) probably be deleted and replaced accordingly.
+  
+  2. Although not a priority for me personally, combined/compound-region-handling is quite flawed/buggy in Ardour itself, which makes AudioClipboard's
+     handling of such regions necessarily buggy (and frankly annoying) for accurate copying and pasting, despite my best efforts...  Step 1 here is for
+     the developers of Ardour to address the following bugs with respect to combined/compound regions...  After a use of Uncombine upon a combined region,
+     Ardour often fails to recreate accurate and original:
+       - Envelope curve/points/data.
+       - Fade-in/out lengths.
+       - Fade-in/out states (-activate or not).
+       - Lock state (-although unlocking all 'child' regions is probably a good move, so when Uncombine is used on the parent/compound region, 'child'
+         regions don't immediately, awkwardly 'snap back' to some former position).
+       - Original region layering (i.e. "layering index" info).
+
+     And this is true for original compound/combined/'parent' regions, but it's especially true for *duplicates* of them.  Sometimes, for example, when
+     Uncombine is used upon a clone/duplicate of a combined audio region, no 'child' regions manifest at all!  In short, the devs of Ardour should
+     ensure accurate 'child' region recreation when Uncombine is used (whether on an original 'parent' region or a duplicate of a parent), INCLUDING
+     original region layering.  If this is acheived, copying combined/compound-region info would be rendered FAR easier. 
+
+  3. If one could access Source list entries *directly* (instead of scanning track playlists for regions and their IDs and so forth), then all of
+     that scanning logic could potentially be eliminated, and the script could be made even leaner and arguably more straightforward.
+
+  4. If you could assess *in a more direct and immediate fashion* whether a given region is coming from a source that is truly mono or simply stereo, this
+     could then be implemented accordingly and result in less ambiguousness for original_source_type/final_source_type.  This could potentially make the
+     code leaner throughout by eliminating Import Options (IO) checks for type, asking the using about type in the Source Finder Wizard portion, etc...
+     (-Note that this comment only really applies to situations where used_channel_count = 1 and used_channel_type = 0; i.e., a region where ucc & uct =
+     1 & 0 respectively COULD be coming from a MONO source, OR it could be the LEFT channel audio (via a use of Make Mono Regions) of a STEREO source!).
+
+  5. Supporting multi-channel audio regions handling would be nice, but would no doubt be difficult...  For now, I feel like eliminating ALL XML-scanning
+     and thus getting new bindings for assessing fade shape/length data directly, as well as having the devs address some of the bugs related to
+     combined/compound regions, etc., etc., should be dealt with *first*, THEN I could potentially implement 3+ channel audio regions handling.  In other
+     words, it would be nice to make the overall script here far more neat and lean BEFORE implementing potentially hefty(?) new functionality/handling.
+
+  6. As far as I'm concerned, MIDI copying and pasting doesn't need to be implemented into AudioClipboard ever because exporting MIDI regions is already
+     easy in Ardour (-select the MIDI region, then click Region -> Export...).  It's just not worth the time implementing it if you can already do that.
+
+  7. People on the forum have been wanting to copy and paste audio regions between sessions/snapshots basically since Ardour's inception.  So, hopefully
+     one day the devs of Ardour will finally implement some functionality like that *directly into Ardour itself*, and thus make this script obsolete.
+     But, given their reaction to the idea over the years, it appears that this may never happen... (In my opinion, they should at least implement a
+     selectable option to export audio regions with ALL original envelope, fade, gain, etc., data somehow attached to it.  Then you could simply export
+     regions like that and re-import them into your 'Session B', resulting in a similar outcome to what AudioClipboard now does.)
+     
+     However, given all the things I've learned along the way whilst developing AudioClipboard, such as the complications with importing/embedding
+     sources into 'Session B' and how one might choose to handle importing vs embedding, etc., I can't really blame the devs for not wanting to implement
+     copying and pasting like this.  The obvious, easy route for them is to simply say 'just commit to the envelope or whatever and bounce the file'.
+     But oftentimes that is simply an unjustifiable (or at least undesireable) path, -> hence AudioClipboard! :D
+
+  --]] ---------------------------------------------------------------------------------
   ------------------------- Establish Global & Early Functions -------------------------
   --------------------------------------------------------------------------------------
 
@@ -76,7 +131,7 @@ function factory() return function()
     end
 
     -- Construct a header for TSV1 (-just for better readability when/if someone views it)...
-    -- I've included a brief description of each field:
+    -- Included here is a brief description of each field in TSV1 (-for similar summary descriptions for the fields used in *TSV2*, go to line ~1900):
     local tsv1_header = table.concat({
       "origin_session", -- 1; Name of the 'full' session path being copied from.
       "origin_snapshot", -- 2; Name of the exact snapshot being copied from.
@@ -1865,7 +1920,7 @@ function factory() return function()
       if tsv2_file_write then
 
         -- Construct a header for TSV2 (-just for better readability when/if someone views it)...
-        -- I've included a brief description of each field:
+        -- Included here is a brief description of each field in TSV2 (-for similar summary descriptions for the fields used in *TSV1*, go to line ~140):
         local tsv2_header = table.concat({
           "local_session", -- 1; The path (as Ardour sees it) to the session that this TSV2 ID cache belongs to.
           "local_snapshot", -- 2; The exact snapshot that this TSV2 belongs to.
