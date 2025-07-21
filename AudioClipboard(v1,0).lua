@@ -1,8 +1,8 @@
 ardour {
   ["type"] = "EditorAction",
-  name = "AudioClipboard (v1.0)",
+  name = "AudioClipboard",
   license = "GPL",
-  author = "J.K.Lookinland & ALSA",
+  author = "Joseph K. Lookinland",
   description = [[     This script lets you 'copy and paste' selected mono and
   stereo audio regions between project sessions/snapshots,
   with almost all original region data being preserved in the
@@ -186,7 +186,8 @@ function factory() return function()
     -- Write header and gap:
     f:write(tsv1_header .. "\n\n")
 
-    -- Write each entry followed by a gap:
+    -- Write each entry followed by a gap...
+    -- I prefer including gaps in the TSV files for easier human-readability:
     for _, line in ipairs(lines) do
       f:write(line .. "\n\n")
     end
@@ -436,8 +437,8 @@ function factory() return function()
       "         Step 3: Select the audio track you wish to paste onto and use the \"Paste Regions\" function.  --> Click OK and watch " ..
       "your regions appear! ~Done!\n\n\n" ..
       "                              ⚠ WARNING:\n\n" ..
-      "         Due to the ways in which sources and regions are handled via this script, if \"Move relevant automation when " ..
-      "audio regions are moved\" (under Preferences > Editor) is turned ON during a Pre-Paste or Paste function into an area with " ..
+      "         Due to the way in which sources and regions are handled via this script, if \"Move relevant automation when " ..
+      "audio regions are moved\" (-under Preferences > Editor) is turned ON during a Pre-Paste or Paste function into an area with " ..
       "ANY automation on the track (e.g. fader, pan, plugin, etc.), repeated sliding and ultimately destruction of original automation " ..
       "curves will occur. Therefore, if you MUST leave that setting on but want to avoid this destruction, then simply paste your " ..
       "regions onto an empty, throwaway track, and then just move them on from there."
@@ -503,7 +504,9 @@ function factory() return function()
       if not ar or ar:isnil() then
         LuaDialog.Message(
           "Invalid Selection!",
-          "Unfortunately MIDI notes and regions cannot be\ncopied by AudioClipboard at this time.\n\nPlease select only mono and/or stereo audio regions.",
+          "Unfortunately MIDI notes and regions cannot be\ncopied by AudioClipboard.\n\nPlease select only mono and/or stereo audio regions.\n\n" ..
+          "To 'copy and paste' a MIDI region between sessions,\nsimply select it, then click Region -> Export..., and\nthen reimport (or drag-and-drop) " ..
+          "your new .mid file\ninto your destination project!",
           LuaDialog.MessageType.Warning,
           LuaDialog.ButtonType.Close
         ):run()
