@@ -68,7 +68,7 @@ Simply download the AudioClipboard.lua file, and do the following:
 
 -----------------------------------------------------------------------------------------------------------------------------
 
-## Using AudioClipboard
+## How to use AudioClipboard
 
 ### Step 1:
 
@@ -79,15 +79,17 @@ Select mono and/or stereo audio regions that you would like to copy, and then us
 In the project snapshot you would like to paste into, select an audio track and use the "Pre-Paste Files" function.  This step ensures that all of the necessary audio source files are embedded or imported into the current session as required.
 
 > [!TIP]
-> Always use "View File List" before pre-pasting to ensure proper file usage, and consider using the "Manually Select Files to Use" feature to redirect pasted regions to different/better sources.
+> Always use "View File List" before proceeding to ensure proper file usage, and consider using the _"Manually Select Files to Use"_ feature to redirect pasted regions to different/better sources (-see additional info below).
 
 ### Step 3:
 
-Select the audio track you wish to paste onto and use the "Paste Regions" function. --> Click OK and watch your regions appear! _~Done!_
+Select the audio track you wish to paste onto and use the "Paste Regions" function. → Click OK and watch your regions appear!
+
+_~Done!_
 
 -----------------------------------------------------------------------------------------------------------------------------
 
-## Other Things You Can Do Using AudioClipboard
+## Additional Features/Uses
 
 The following is a series of examples of what you can do using AudioClipboard.
 
@@ -99,6 +101,7 @@ There are many situations where this can come in handy:
 - A project's Source List might be cluttered with duplicate entries, and you'd like to clean it up.
 - You might be working with lower-quality sources (-like compressed MP3s), but now you wish to 'swap them out' for better sources while maintaining all of the original envelope, gain, trimming, etc..
 - You might also just prefer having certain regions link to sources located in a new/different/updated folder (or even a different SSD/HDD).
+- You have some broken/missing sources that you just cannot seem to fix, although you do have new sources that would be suitable replacements (-see the next portion).
 
 In all of these cases, the _"Manually Select Files To Use"_ feature during Pre-Paste affords you this ability!
 
