@@ -74,7 +74,7 @@ Simply download the AudioClipboard.lua file, and do the following:
 
 ### Step 1:
 
-Select mono and/or stereo audio regions that you would like to copy, and then use the "Copy Regions"  function.
+Select mono and/or stereo audio regions that you would like to copy, and then use the "Copy Regions" function.
 
 ![Step 1; Select Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_1_1_Select_Regions.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Arrow_1.png) ![Step 1; Copy Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_1_2_Copy_Regions.gif)
 
@@ -89,9 +89,9 @@ In the project session/snapshot you would like to paste into, select an audio tr
 
 ### Step 3:
 
-Select the audio track you wish to paste onto and use the "Paste Regions" function. → Click OK and watch your regions appear!
+With that same (or whichever) audio track selected, use the "Paste Regions" function. _→ Click OK and watch your regions appear!_
 
-![Step 3; Select Track](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_3_1_Select_Track.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Arrow_1.png) ![Step 3; Paste Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_3_2_Paste_Regions.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Arrow_1.png) ![Step 3; CONGLATURATION](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_3_3_CONGLATURATION.gif)
+![Step 3; Select Track](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_3_1_Paste_Regions.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Arrow_1.png) ![Step 3; Paste Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_3_2_CONGLATURATION.gif)
 
 _~Done!_
 
