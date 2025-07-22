@@ -75,13 +75,13 @@ Simply download the [AudioClipboard.lua](https://github.com/GhostsonAcid/AudioCl
 
 ## How to use AudioClipboard
 
-### Step 1:
+### Step 1 - Copy Regions:
 
 Select mono and/or stereo audio regions that you would like to copy, and then use the "Copy Regions" function.
 
 ![Step 1; Select Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_1_1_Select_Regions.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Arrow_1.png) ![Step 1; Copy Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_1_2_Copy_Regions.gif)
 
-### Step 2:
+### Step 2 - Pre-Paste Files:
 
 In the project session/snapshot you would like to paste into, select an audio track and use the "Pre-Paste Files" function.  This step ensures that all of the necessary audio source files are embedded or imported into the current session as required.
 
@@ -90,7 +90,7 @@ In the project session/snapshot you would like to paste into, select an audio tr
 > [!TIP]
 > Always use "View File List" before proceeding to ensure proper file usage, and consider using the _"Manually Select Files to Use"_ feature to redirect pasted regions to different/better sources (-see additional info below).
 
-### Step 3:
+### Step 3 - Paste Regions:
 
 With that same (or whichever) audio track selected, use the "Paste Regions" function. _→ Click OK and watch your regions appear!_
 
