@@ -141,11 +141,19 @@ Here is a diagram depicting the flow of this Pre-Paste 'decision-making' process
 
 ## Other Notes
 
+AudioClipboard has been tested thoroughly on macOS Mojave running multiple copies of Ardour 8.12, as well as a VM of Ubuntu Studio.
+
+For anyone interested in how any of this works, I've included hundreds of --muted notes all throughout the script itself, describing each step of the process in oftentimes considerable detail.
+
+Also, thanks to @izlence for establishing the basic premise for AudioClipboard with their [ardour-scripts](https://github.com/izlence/ardour-scripts) GitHub project!
+
 > [!TIP]
 > This script can be used in conjunction with Ardour's built-in track-template-creator _(-right-click on an audio mixer strip's name, then use "Save As Template...")_ to achieve full track and region duplication from one session/snapshot into another.
 
 > [!IMPORTANT]
 > Also, if you experience any bugs with this script, please submit an "Issue" here on GitHub, or post about it/them on the Ardour forum (discourse.ardour.org) and link @GhostsonAcid in your comment, and I will try to address it.
+
+ When I began this in April (2025), I had no idea this was going to evolve into such a 'gigantic little' script, but here we are.
 
 ***~Thank you and enjoy!***
 
