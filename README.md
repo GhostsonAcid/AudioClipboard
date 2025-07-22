@@ -22,6 +22,7 @@ AudioClipboard (via AudioClipboard.lua) is a script designed to be run in the Ar
 - The Paste action is an undoable command _(via ctrl-Z/cmd-Z, etc.)._
 - File-collisions and accidental erasures are prevented behind the scenes via simple file-name checks.
 - Legacy Dual-Mono stereo pairs (with -L/-R endings) are automatically modernized during pre-paste by renaming them with standard (%L/%R) endings.
+- Legacy fade shapes inherited from older versions of Ardour (like v2, etc.) are automatically detected and replaced during pasting with their closest modern equivalents. (-And the user is informed about this.)
 - Under GPL, thus: 100% free to use, copy, alter, distribute, etc.!
 
 ## Known Limitations/Warnings:
