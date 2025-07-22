@@ -3,7 +3,7 @@
 
 ## Description
 
-AudioClipboard (via AudioClipboard.lua) is a script designed to be run in the Ardour DAW (v8.12+) that allows one to copy and paste mono and stereo audio regions in between projects/sessions/snapshots.
+AudioClipboard (via AudioClipboard.lua) is a script designed to be run in the Ardour DAW (v8.12+) that allows one to copy and paste mono and stereo audio regions between projects/sessions/snapshots.
 
 ![AudioClipboard Opening Window](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Opening_Window.png)
 
