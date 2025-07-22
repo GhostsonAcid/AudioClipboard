@@ -38,7 +38,7 @@ AudioClipboard (via AudioClipboard.lua) is a script designed to be run in the Ar
 
 ## Installation:
 
-Simply download the [AudioClipboard.lua](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard.lua) file, and do the following:
+Simply download the [AudioClipboard.lua](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard.lua) file here on GitHub, and then do the following based on your OS:
 
 ![How To Download The AudioClipboard Lua File](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Download_Icon.png)
 
