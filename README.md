@@ -125,6 +125,9 @@ As an extention of what manual file selection can do, you can also fix broken/mi
 
 ![How to fix broken/missing sources using AudioClipboard](https://raw.githubusercontent.com/GhostsonAcid/AudioClipboard/refs/heads/main/AudioClipboard_How_To_Fix_Broken_Sources.jpg)
 
+> [!TIP]
+> This script can be used in conjunction with Ardour's built-in track-template-creator _(-right-click on an audio mixer strip's name, then use "Save As Template...")_ to achieve full track and region duplication from one session/snapshot into another.
+
 -----------------------------------------------------------------------------------------------------------------------------
 
 ## How This Script Works
@@ -145,18 +148,13 @@ AudioClipboard has been tested thoroughly on macOS Mojave running multiple copie
 
 For anyone interested in how any of this works, I've included hundreds of --muted notes all throughout the script itself, describing each step of the process in oftentimes considerable detail.
 
-Also, thanks to @izlence for establishing the basic premise for AudioClipboard with their [ardour-scripts](https://github.com/izlence/ardour-scripts) GitHub project!
-
-> [!TIP]
-> This script can be used in conjunction with Ardour's built-in track-template-creator _(-right-click on an audio mixer strip's name, then use "Save As Template...")_ to achieve full track and region duplication from one session/snapshot into another.
+Thanks to @izlence for establishing the basic premise for AudioClipboard with their [ardour-scripts](https://github.com/izlence/ardour-scripts) GitHub project!
 
 > [!IMPORTANT]
 > Also, if you experience any bugs with this script, please submit an "Issue" here on GitHub, or post about it/them on the Ardour forum (discourse.ardour.org) and link @GhostsonAcid in your comment, and I will try to address it.
 
-When I began this in April (2025), I had no idea this was going to evolve into such a 'gigantic little' script, but here we are.
-
-Thanks for reading, and I hope this script helps some others out there as much as it has helped me!
+Thank you for reading, and I hope this script helps some others out there as much as it has helped me!
 
 _~Enjoy!_
 
-_-JKL_
+_J. K. Lookinland_
