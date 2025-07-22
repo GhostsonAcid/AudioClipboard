@@ -22,6 +22,7 @@ AudioClipboard (via AudioClipboard.lua) is a script designed to be run in the Ar
 - The Paste action is an undoable command _(via ctrl-Z/cmd-Z, etc.)._
 - File-collisions and accidental erasures are prevented behind the scenes via simple file-name checks.
 - Legacy Dual-Mono stereo pairs (with -L/-R endings) are automatically modernized during pre-paste by renaming them with standard (%L/%R) endings.
+- Legacy fade shapes inherited from older versions of Ardour (like v2, etc.) are automatically detected and replaced during pasting with their closest modern equivalents. (-And the user is informed about this.)
 - Under GPL, thus: 100% free to use, copy, alter, distribute, etc.!
 
 ## Known Limitations/Warnings:
@@ -74,7 +75,7 @@ Simply download the AudioClipboard.lua file, and do the following:
 
 ### Step 1:
 
-Select mono and/or stereo audio regions that you would like to copy, and then use the "Copy Regions"  function.
+Select mono and/or stereo audio regions that you would like to copy, and then use the "Copy Regions" function.
 
 ![Step 1; Select Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_1_1_Select_Regions.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Arrow_1.png) ![Step 1; Copy Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_1_2_Copy_Regions.gif)
 
@@ -89,9 +90,9 @@ In the project session/snapshot you would like to paste into, select an audio tr
 
 ### Step 3:
 
-Select the audio track you wish to paste onto and use the "Paste Regions" function. → Click OK and watch your regions appear!
+With that same (or whichever) audio track selected, use the "Paste Regions" function. _→ Click OK and watch your regions appear!_
 
-![Step 3; Select Track](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_3_1_Select_Track.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Arrow_1.png) ![Step 3; Paste Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_3_2_Paste_Regions.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Arrow_1.png) ![Step 3; CONGLATURATION](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_3_3_CONGLATURATION.gif)
+![Step 3; Select Track](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_3_1_Paste_Regions.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Arrow_1.png) ![Step 3; Paste Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_3_2_CONGLATURATION.gif)
 
 _~Done!_
 
