@@ -6,7 +6,7 @@ AudioClipboard (via AudioClipboard.lua) is a script designed to be run in the Ar
 
 ![AudioClipboard Opening Window](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Opening_Window.png)
 
-## Features
+### Features
 
 - Works with audio regions, mono and stereo.
 - Easy to use, 3-step process: ***Copy → Pre-Paste → Paste***
@@ -24,7 +24,7 @@ AudioClipboard (via AudioClipboard.lua) is a script designed to be run in the Ar
 - Legacy fade shapes inherited from older versions of Ardour (like v2, etc.) are automatically detected and replaced during pasting with their closest modern equivalents. (-And the user is informed about this.)
 - Under GPL, thus: 100% free to use, copy, alter, distribute, etc.!
 
-## Known Limitations/Warnings
+### Known Limitations/Warnings
 
 - It doesn't (yet) work with audio regions/sources with more than 2 channels, sorry.
 - It doesn't work with anything MIDI, but this is okay because transferring MIDI regions is easy thanks to Ardour's built-in region export function _(-select the MIDI region, then click Region → Export...)._
