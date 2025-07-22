@@ -1,13 +1,12 @@
 # AudioClipboard 📋
------------------------------------------------------------------------------------------------------------------------------
 
-## Description
+## Basic Description
 
 AudioClipboard (via AudioClipboard.lua) is a script designed to be run in the Ardour DAW (v8.12+) that allows one to copy and paste mono and stereo audio regions between projects/sessions/snapshots.
 
 ![AudioClipboard Opening Window](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Opening_Window.png)
 
-### Features
+## Features
 
 - Works with audio regions, mono and stereo.
 - Easy to use, 3-step process: ***Copy → Pre-Paste → Paste***
@@ -25,7 +24,7 @@ AudioClipboard (via AudioClipboard.lua) is a script designed to be run in the Ar
 - Legacy fade shapes inherited from older versions of Ardour (like v2, etc.) are automatically detected and replaced during pasting with their closest modern equivalents. (-And the user is informed about this.)
 - Under GPL, thus: 100% free to use, copy, alter, distribute, etc.!
 
-### Known Limitations/Warnings
+## Known Limitations/Warnings
 
 - It doesn't (yet) work with audio regions/sources with more than 2 channels, sorry.
 - It doesn't work with anything MIDI, but this is okay because transferring MIDI regions is easy thanks to Ardour's built-in region export function _(-select the MIDI region, then click Region → Export...)._
@@ -102,22 +101,7 @@ _~Done!_
 
 ## Use Cases and Other Features
 
-The following is a series of examples of what you can do using AudioClipboard.
-
-### Full Track & Regions Duplication
-
-> [!TIP]
-> This script can be used in conjunction with Ardour's built-in track-template-creator to achieve full track and region duplication from one session/snapshot into another.
-
-Simply right-click on an audio mixer strip's name, then use "Save As Template...":
-
-![Track Template Creation](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/Track_Template_Creation.gif)
-
--Then, when creating a new track in your destination session/snapshot, use the template you saved:
-
-![Track Template Use](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/Track_Template_Use.gif)
-
--And then simply copy and paste via AudioClipboard as described earlier!
+The following is a series of examples of some useful things you can achieve using AudioClipboard.
 
 ### Manually Select Files To Use
 
@@ -140,18 +124,29 @@ As an extention of what manual file selection can do, you can also fix broken/mi
 
 ![How to fix broken/missing sources using AudioClipboard](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_How_To_Fix_Broken_Sources.jpg)
 
-> [!TIP]
-> This script can be used in conjunction with Ardour's built-in track-template-creator _(-right-click on an audio mixer strip's name, then use "Save As Template...")_ to achieve full track and region duplication from one session/snapshot into another.
+### Full Track & Regions Duplication
+
+This script can be used in conjunction with Ardour's built-in track-template-creator to achieve full track and region duplication from one session/snapshot into another. (Perhaps down the road I will implement this feature directly into AudioClipboard itself.  But for now, this method will suffice!)
+
+**1. Right-click on an audio mixer strip's name, then use "Save As Template...".**
+
+![Track Template Creation](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/Track_Template_Creation.gif)
+
+**2. Then, when creating a new track in your destination session/snapshot, use the template you saved.**
+
+![Track Template Use](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/Track_Template_Use.gif)
+
+**3. And then simply copy, pre-paste, and paste via AudioClipboard as described earlier!**
 
 -----------------------------------------------------------------------------------------------------------------------------
 
 ## How This Script Works
 
-In short, Audio Clipboard works by externally logging all relevant and available data for the copied regions into a file called "AudioClipboard.tsv" in a temporary folder offered by your computer.  Then, during Pre-Paste, it scans for already-present, usable sources, creates a local Region ID Cache (-another, more permanent .tsv file located in your project's `interchange/` directory), and ultimately imports/embeds the remaining sources needed for successful pasting.  And finally, during Pasting, it then clones new audio regions into existence via IDs provided by the local cache, and utilizes the data in AudioClipboard.tsv to recreate the copied regions, with original region size, trim, position, gain, envelope, fade lengths, and other states all being preserved in the process.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In short, Audio Clipboard works by externally logging all relevant and available data for the copied regions into a file called "AudioClipboard.tsv" in a temporary folder offered by your computer.  Then, during Pre-Paste, it scans for already-present, usable sources, creates a local Region ID Cache (-another, more permanent .tsv file located in your project's `interchange/` directory), and ultimately imports/embeds the remaining sources needed for successful pasting.  And finally, during Pasting, it then clones new audio regions into existence via IDs provided by the local cache, and utilizes the data in AudioClipboard.tsv to recreate the copied regions, with original region size, trim, position, gain, envelope, fade lengths, and other states all being preserved in the process.
 
-### Pre-Paste 
+### The Pre-Paste Process
 
-At the heart of this program is what happens during the "Pre-Paste" process.  Depending on where copied region's sources are located on your computer, the sources that are 'pre-pasted' must be handled accordingly.  Instead of letting Ardour just blindly import (and convert to .wav) any and all source files into each project's `audiofiles/` folder, I decided to take the more careful approach of preserving region-to-source relationships as close to 1:1 as possible.  Thus, for example, if a copied region is coming from a source that is _embedded,_ then when that same source is 'pre-pasted' into 'Session B' (i.e. the session you're pre-pasting/pasting into), then that particular source will be embedded as well, _-not imported._  Similarly, if a copied region's source is coming from a standard %L/%R (.wav) file pair already imported into the project, then that pair will be duplicated into Session B's `audiofiles/` folder accordingly thus, again, preserving the original region-to-source relationships.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;At the heart of this script is what happens during the "Pre-Paste" process.  Depending on where copied region's sources are located on your computer, the sources that are 'pre-pasted' must be handled uniquely.  Instead of letting Ardour just blindly import (and convert to .wav) any and all source files into each project's `audiofiles/` folder, I decided to take an approach of preserving region-to-source relationships as close to 1:1 as possible.  Thus, for example, if a copied region is coming from a source that is _embedded,_ then when that same source is 'pre-pasted' into a different session, that particular source will be embedded there as well, _-not imported._  Similarly, if a copied region's source is coming from a standard %L/%R (.wav) file pair already imported into the project, then that pair will be duplicated into the other session's `audiofiles/` folder accordingly thus, again, preserving the original region-to-source relationships. And so on...
 
 Here is a diagram depicting the flow of this Pre-Paste 'decision-making' process:
 
