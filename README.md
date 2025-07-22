@@ -120,7 +120,7 @@ Here is a diagram for how it can be used:
 
 ### Fix broken/missing sources
 
-As an extention of what manual file selection can do, you can also fix broken/missing sources like so:
+As an extension of what manual file selection can do, you can also fix broken/missing sources like so:
 
 ![How to fix broken/missing sources using AudioClipboard](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_How_To_Fix_Broken_Sources.jpg)
 
