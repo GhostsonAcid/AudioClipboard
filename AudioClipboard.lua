@@ -389,7 +389,7 @@ function factory() return function()
   ------------------------------------------------------------------
 
   -- Immediately stop the transport if it is rolling/playing...
-  -- This (presumably) reduces potential crashing/issues if trying to use do_import/do_embed during Pre-Paste, or trying to uncombine regions during copying, etc.:
+  -- This (presumably) reduces potential crashing/issues if trying to use do_embed during Pre-Paste, or trying to uncombine regions during copying, etc.:
   if Session:transport_rolling() then
     Session:request_stop(true, false, ARDOUR.TransportRequestSource.TRS_UI)
   end
