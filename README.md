@@ -5,6 +5,8 @@
 
 AudioClipboard (via AudioClipboard.lua) is a script designed to be run in the Ardour DAW (v8.12+) that allows one to copy and paste mono and stereo audio regions in between projects/sessions/snapshots.
 
+![AudioClipboard Opening Window](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Opening_Window.png)
+
 ## Features:
 
 - Works with audio regions, mono and stereo.
@@ -22,7 +24,7 @@ AudioClipboard (via AudioClipboard.lua) is a script designed to be run in the Ar
 - Legacy Dual-Mono stereo pairs (with -L/-R endings) are automatically modernized during pre-paste by renaming them with standard (%L/%R) endings.
 - Under GPL, thus: 100% free to use, copy, alter, distribute, etc.!
 
-## Known Limitations:
+## Known Limitations/Warnings:
 
 - It doesn't (yet) work with audio regions/sources with more than 2 channels, sorry.
 - It doesn't work with anything MIDI, but this is okay because transferring MIDI regions is easy thanks to Ardour's built-in region export function _(-select the MIDI region, then click Region → Export...)._
@@ -74,9 +76,13 @@ Simply download the AudioClipboard.lua file, and do the following:
 
 Select mono and/or stereo audio regions that you would like to copy, and then use the "Copy Regions"  function.
 
+![Step 1; Select Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_1_1_Select_Regions.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Arrow_1.png) ![Step 1; Copy Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_1_2_Copy_Regions.gif)
+
 ### Step 2:
 
 In the project session/snapshot you would like to paste into, select an audio track and use the "Pre-Paste Files" function.  This step ensures that all of the necessary audio source files are embedded or imported into the current session as required.
+
+![Step 2; Select Track](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_2_1_Select_Track.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Arrow_1.png) ![Step 2; Pre-Paste Sources](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_2_2_Pre-Paste_Sources.gif)
 
 > [!TIP]
 > Always use "View File List" before proceeding to ensure proper file usage, and consider using the _"Manually Select Files to Use"_ feature to redirect pasted regions to different/better sources (-see additional info below).
@@ -84,6 +90,8 @@ In the project session/snapshot you would like to paste into, select an audio tr
 ### Step 3:
 
 Select the audio track you wish to paste onto and use the "Paste Regions" function. → Click OK and watch your regions appear!
+
+![Step 3; Select Track](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_3_1_Select_Track.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Arrow_1.png) ![Step 3; Paste Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_3_2_Paste_Regions.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Arrow_1.png) ![Step 3; CONGLATURATION](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_3_3_CONGLATURATION.gif)
 
 _~Done!_
 
