@@ -100,9 +100,24 @@ _~Done!_
 
 -----------------------------------------------------------------------------------------------------------------------------
 
-## Additional Features/Uses
+## Use Cases and Other Features
 
 The following is a series of examples of what you can do using AudioClipboard.
+
+### Full Track & Regions Duplication
+
+> [!TIP]
+> This script can be used in conjunction with Ardour's built-in track-template-creator to achieve full track and region duplication from one session/snapshot into another.
+
+Simply right-click on an audio mixer strip's name, then use "Save As Template...":
+
+![Track Template Creation](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Track_Template_Creation.gif)
+
+-Then, when creating a new track in your destination session/snapshot, use the template you saved:
+
+![Track Template Use](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Track_Template_Use.gif)
+
+-And then simply copy and paste via AudioClipboard as described earlier!
 
 ### Manually Select Files To Use
 
