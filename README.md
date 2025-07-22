@@ -74,6 +74,9 @@ Simply download the [AudioClipboard.lua](https://github.com/GhostsonAcid/AudioCl
 
 ## How to use AudioClipboard
 
+> [!NOTE]
+> Before using AudioClipboard for considerable copy-paste work, it is strongly recommended to duplicate the Ardour application itself (and rename it if necessary) so you can have two projects open at the same time.  Without doing this, you would have to close and open entire projects with each copy and paste action, which is obviously silly.
+
 ### Step 1 - Copy Regions
 
 Select mono and/or stereo audio regions that you would like to copy, and then use the "Copy Regions" function.
@@ -95,7 +98,7 @@ With that same (or whichever) audio track selected, use the "Paste Regions" func
 
 ![Step 3; Select Track](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Basic_Use_Step_3_1_Paste_Regions.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/Arrow_1.png) ![Step 3; Paste Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Basic_Use_Step_3_2_CONGLATURATION.gif)
 
-_~Done!_
+***~Done!***
 
 -----------------------------------------------------------------------------------------------------------------------------
 
@@ -118,7 +121,7 @@ Here is a diagram for how it can be used:
 
 ![Manual File Selection Example](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Manual_File_Selection.jpg)
 
-### Fix broken/missing sources
+### Fix Broken/Missing Sources
 
 As an extension of what manual file selection can do, you can also fix broken/missing sources like so:
 
@@ -126,7 +129,7 @@ As an extension of what manual file selection can do, you can also fix broken/mi
 
 ### Full Track & Regions Duplication
 
-This script can be used in conjunction with Ardour's built-in track-template-creator to achieve full track and region duplication from one session/snapshot into another. (Perhaps down the road I will implement this feature directly into AudioClipboard itself.  But for now, this method will suffice!)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This script can be used in conjunction with Ardour's built-in track-template-creator to achieve full track and region duplication from one session/snapshot into another. (Perhaps down the road I will implement this feature directly into AudioClipboard itself.  But for now, this method will suffice!)
 
 **1. Right-click on an audio mixer strip's name, then use "Save As Template...".**
 
@@ -154,14 +157,20 @@ Here is a diagram depicting the flow of this Pre-Paste 'decision-making' process
 
 ## Other Notes
 
+### Testing
+
 AudioClipboard has been tested thoroughly on macOS Mojave running multiple copies of Ardour 8.12, as well as a VM of Ubuntu Studio.  If for some reason it doesn't work on your particular OS, please let me know.
+
+> [!IMPORTANT]
+> If you experience any bugs with this script, please submit an "Issue" here on GitHub, or post about it/them on the Ardour forum (discourse.ardour.org) and link @GhostsonAcid in your comment, and I will try to address it.
+
+### Final Comments
 
 For anyone interested in how any of this works, I've included hundreds of --muted notes all throughout the script itself, describing each step of the process in oftentimes considerable detail.
 
 Thanks to @izlence for establishing the basic premise for AudioClipboard with their [ardour-scripts](https://github.com/izlence/ardour-scripts) GitHub project!
 
-> [!IMPORTANT]
-> Also, if you experience any bugs with this script, please submit an "Issue" here on GitHub, or post about it/them on the Ardour forum (discourse.ardour.org) and link @GhostsonAcid in your comment, and I will try to address it.
+-----------------------------------------------------------------------------------------------------------------------------
 
 Thank you for reading, and I hope this script helps some others out there as much as it has helped me!
 
