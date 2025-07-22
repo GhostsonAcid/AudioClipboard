@@ -141,7 +141,7 @@ Here is a diagram depicting the flow of this Pre-Paste 'decision-making' process
 
 ## Other Notes
 
-AudioClipboard has been tested thoroughly on macOS Mojave running multiple copies of Ardour 8.12, as well as a VM of Ubuntu Studio.
+AudioClipboard has been tested thoroughly on macOS Mojave running multiple copies of Ardour 8.12, as well as a VM of Ubuntu Studio.  If for some reason it doesn't work on your particular OS, please let me know.
 
 For anyone interested in how any of this works, I've included hundreds of --muted notes all throughout the script itself, describing each step of the process in oftentimes considerable detail.
 
