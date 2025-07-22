@@ -153,8 +153,10 @@ Also, thanks to @izlence for establishing the basic premise for AudioClipboard w
 > [!IMPORTANT]
 > Also, if you experience any bugs with this script, please submit an "Issue" here on GitHub, or post about it/them on the Ardour forum (discourse.ardour.org) and link @GhostsonAcid in your comment, and I will try to address it.
 
- When I began this in April (2025), I had no idea this was going to evolve into such a 'gigantic little' script, but here we are.
+When I began this in April (2025), I had no idea this was going to evolve into such a 'gigantic little' script, but here we are.
 
-***~Thank you and enjoy!***
+Thanks for reading, and I hope this script helps some others out there as much as it has helped me!
+
+_~Enjoy!_
 
 _-JKL_
