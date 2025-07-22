@@ -11,7 +11,7 @@ AudioClipboard (via AudioClipboard.lua) is a script designed to be run in the Ar
 
 - Works with audio regions, mono and stereo.
 - Easy to use, 3-step process: ***Copy → Pre-Paste → Paste***
-- Pasted regions retain all original position, trim, envelope, gain, fade length/shape data, etc..
+- Pasted regions retain all original position, trim, envelope, gain, polarity, fade length/shape data, etc..
 - Avoids most re-embedding or re-importing of files already present in the project during Pasting.
 - By default, original relationships to source materials are preserved almost 1:1, but there's also...
 - An option to manually select different files to use for pasting.  This is super convenient for cleaning-up projects in general, and even fixing broken sources (-i.e. you can literally copy and paste regions from broken/missing sources and redirect to new source material in the process).
