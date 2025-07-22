@@ -5,7 +5,7 @@
 
 AudioClipboard (via AudioClipboard.lua) is a script designed to be run in the Ardour DAW (v8.12+) that allows one to copy and paste mono and stereo audio regions between projects/sessions/snapshots.
 
-![AudioClipboard Opening Window](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Opening_Window.png)
+![AudioClipboard Opening Window](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Opening_Window.png)
 
 ### Features
 
@@ -40,7 +40,7 @@ AudioClipboard (via AudioClipboard.lua) is a script designed to be run in the Ar
 
 Simply download the [AudioClipboard.lua](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard.lua) file here on GitHub, and then do the following based on your OS:
 
-![How To Download The AudioClipboard Lua File](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Download_Icon.png)
+![How To Download The AudioClipboard.lua File](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Download_Icon.png)
 
 ### GNU/Linux:
 
@@ -79,13 +79,13 @@ Simply download the [AudioClipboard.lua](https://github.com/GhostsonAcid/AudioCl
 
 Select mono and/or stereo audio regions that you would like to copy, and then use the "Copy Regions" function.
 
-![Step 1; Select Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_1_1_Select_Regions.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Arrow_1.png) ![Step 1; Copy Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_1_2_Copy_Regions.gif)
+![Step 1; Select Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Basic_Use_Step_1_1_Select_Regions.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/Arrow_1.png) ![Step 1; Copy Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Basic_Use_Step_1_2_Copy_Regions.gif)
 
 ### Step 2 - Pre-Paste Files
 
 In the project session/snapshot you would like to paste into, select an audio track and use the "Pre-Paste Files" function.  This step ensures that all of the necessary audio source files are embedded or imported into the current session as required.
 
-![Step 2; Select Track](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_2_1_Select_Track.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Arrow_1.png) ![Step 2; Pre-Paste Sources](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_2_2_Pre-Paste_Sources.gif)
+![Step 2; Select Track](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Basic_Use_Step_2_1_Select_Track.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/Arrow_1.png) ![Step 2; Pre-Paste Sources](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Basic_Use_Step_2_2_Pre-Paste_Sources.gif)
 
 > [!TIP]
 > Always use "View File List" before proceeding to ensure proper file usage, and consider using the _"Manually Select Files to Use"_ feature to redirect pasted regions to different/better sources (-see additional info below).
@@ -94,7 +94,7 @@ In the project session/snapshot you would like to paste into, select an audio tr
 
 With that same (or whichever) audio track selected, use the "Paste Regions" function. _→ Click OK and watch your regions appear!_
 
-![Step 3; Select Track](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_3_1_Paste_Regions.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Arrow_1.png) ![Step 3; Paste Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Basic_Use_Step_3_2_CONGLATURATION.gif)
+![Step 3; Select Track](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Basic_Use_Step_3_1_Paste_Regions.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/Arrow_1.png) ![Step 3; Paste Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Basic_Use_Step_3_2_CONGLATURATION.gif)
 
 _~Done!_
 
@@ -111,11 +111,11 @@ The following is a series of examples of what you can do using AudioClipboard.
 
 Simply right-click on an audio mixer strip's name, then use "Save As Template...":
 
-![Track Template Creation](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Track_Template_Creation.gif)
+![Track Template Creation](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/Track_Template_Creation.gif)
 
 -Then, when creating a new track in your destination session/snapshot, use the template you saved:
 
-![Track Template Use](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Track_Template_Use.gif)
+![Track Template Use](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/Track_Template_Use.gif)
 
 -And then simply copy and paste via AudioClipboard as described earlier!
 
@@ -132,13 +132,13 @@ In all of these scenarios (and likely many more), the _"Manually Select Files To
 
 Here is a diagram for how it can be used:
 
-![Manual File Selection Example](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard_Manual_File_Selection.jpg)
+![Manual File Selection Example](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Manual_File_Selection.jpg)
 
 ### Fix broken/missing sources
 
 As an extention of what manual file selection can do, you can also fix broken/missing sources like so:
 
-![How to fix broken/missing sources using AudioClipboard](https://raw.githubusercontent.com/GhostsonAcid/AudioClipboard/refs/heads/main/AudioClipboard_How_To_Fix_Broken_Sources.jpg)
+![How to fix broken/missing sources using AudioClipboard](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_How_To_Fix_Broken_Sources.jpg)
 
 > [!TIP]
 > This script can be used in conjunction with Ardour's built-in track-template-creator _(-right-click on an audio mixer strip's name, then use "Save As Template...")_ to achieve full track and region duplication from one session/snapshot into another.
@@ -155,7 +155,7 @@ At the heart of this program is what happens during the "Pre-Paste" process.  De
 
 Here is a diagram depicting the flow of this Pre-Paste 'decision-making' process:
 
-![Pre-Paste Flowchart](https://raw.githubusercontent.com/GhostsonAcid/AudioClipboard/refs/heads/main/AudioClipboard_Pre-Paste_Flowchart.jpg)
+![Pre-Paste Flowchart](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Pre-Paste_Flowchart.jpg)
 
 ## Other Notes
 
