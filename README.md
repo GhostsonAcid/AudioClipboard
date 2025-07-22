@@ -1,4 +1,5 @@
 # AudioClipboard 📋
+-----------------------------------------------------------------------------------------------------------------------------
 
 ## Basic Description:
 
@@ -29,6 +30,8 @@ AudioClipboard (via AudioClipboard.lua) is a script designed to be run in the Ar
 
 > [!WARNING]
 > - AudioClipboard has the potential to disturb/destroy automation curves (plugin/fader/pan/etc.) on a track if the setting _"Move relevant automation when audio regions are moved" (-under Preferences → Editor)_ is NOT disabled during Pre-Pasting/Pasting.  ***→ So PLEASE be sure to DISABLE that setting BEFORE using AudioClipboard!***
+
+-----------------------------------------------------------------------------------------------------------------------------
 
 ## Installation:
 
@@ -63,7 +66,9 @@ Simply download the AudioClipboard.lua file, and do the following:
 > [!TIP]
 > You can always just click any empty shortcut button in the top-right, hit "Refresh", and then find and set AudioClipboard from the dropdown menu!  Also, to remove a shortcut from a button, hold shift and then right-click it.
 
-## Using AudioClipboard
+-----------------------------------------------------------------------------------------------------------------------------
+
+## How to use AudioClipboard
 
 ### Step 1:
 
@@ -74,15 +79,49 @@ Select mono and/or stereo audio regions that you would like to copy, and then us
 In the project snapshot you would like to paste into, select an audio track and use the "Pre-Paste Files" function.  This step ensures that all of the necessary audio source files are embedded or imported into the current session as required.
 
 > [!TIP]
-> Always use "View File List" before pre-pasting to ensure proper file usage, and consider using the "Manually Select Files to Use" feature to redirect pasted regions to different/better sources.
+> Always use "View File List" before proceeding to ensure proper file usage, and consider using the _"Manually Select Files to Use"_ feature to redirect pasted regions to different/better sources (-see additional info below).
 
 ### Step 3:
 
-Select the audio track you wish to paste onto and use the "Paste Regions" function. --> Click OK and watch your regions appear! _~Done!_
+Select the audio track you wish to paste onto and use the "Paste Regions" function. → Click OK and watch your regions appear!
+
+_~Done!_
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+## Additional Features/Uses
+
+The following is a series of examples of what you can do using AudioClipboard.
+
+### Manually Select Files To Use
+
+Beyond basic copying and pasting, manually selecting which sources to use for pasting is perhaps the single best feature in AudioClipboard.
+
+There are many situations where this can come in handy:
+- A project's Source List might be cluttered with duplicate entries, and you'd like to clean it up.
+- You might be working with lower-quality sources (-like compressed MP3s), but now you wish to 'swap them out' for better sources while maintaining all of the original envelope, gain, trimming, etc..
+- You might also just prefer having certain regions link to sources located in a new/different/updated folder (or even a different SSD/HDD).
+- You have some broken/missing sources that you just cannot seem to fix, although you do have new sources that would be suitable replacements (-see the next portion).
+
+In all of these cases, the _"Manually Select Files To Use"_ feature during Pre-Paste affords you this ability!
+
+
+
+### Fix broken/missing sources:
+
+![How to fix broken/missing sources using AudioClipboard](https://raw.githubusercontent.com/GhostsonAcid/AudioClipboard/refs/heads/main/AudioClipboard_How_To_Fix_Broken_Sources.jpg)
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------
 
 ## How This Script Works
 
 In short, Audio Clipboard works by externally logging all relevant and available data for the copied regions into a file called "AudioClipboard.tsv" in a temporary folder offered by your computer.  Then, during Pre-Paste, it scans for already-present, usable sources, creates a local Region ID Cache (-another, more permanent .tsv file), and ultimately imports/embeds the remaining sources needed for successful pasting.  And finally, during Pasting, it then clones new audio regions into existence via IDs provided by the local cache, and utilizes the data in AudioClipboard.tsv to recreate the copied regions, with original region size, trim, position, gain, envelope, fade lengths, and other states all being preserved in the process.
+
+### Pre-Paste 
+
+![This is a flowchart](https://raw.githubusercontent.com/GhostsonAcid/AudioClipboard/refs/heads/main/AudioClipboard_Pre-Paste_Flowchart.jpg)
 
 ## Other Notes
 
