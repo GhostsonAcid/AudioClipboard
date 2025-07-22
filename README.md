@@ -76,7 +76,7 @@ Select mono and/or stereo audio regions that you would like to copy, and then us
 
 ### Step 2:
 
-In the project snapshot you would like to paste into, select an audio track and use the "Pre-Paste Files" function.  This step ensures that all of the necessary audio source files are embedded or imported into the current session as required.
+In the project session/snapshot you would like to paste into, select an audio track and use the "Pre-Paste Files" function.  This step ensures that all of the necessary audio source files are embedded or imported into the current session as required.
 
 > [!TIP]
 > Always use "View File List" before proceeding to ensure proper file usage, and consider using the _"Manually Select Files to Use"_ feature to redirect pasted regions to different/better sources (-see additional info below).
@@ -102,12 +102,19 @@ There are many situations where this can come in handy:
 - You might be working with lower-quality sources (-like compressed MP3s), but now you wish to 'swap them out' for better sources while maintaining all of the original envelope, gain, trimming, etc..
 - You might also just prefer having certain regions link to sources located in a new/different/updated folder (or even a different SSD/HDD).
 - You have some broken/missing sources that you just cannot seem to fix, although you do have new sources that would be suitable replacements (-see the next portion).
+- You have already edited (e.g. cut, trimmed, positioned, etc.) a full, combined drum mix recording, but you realize you actually have access to the individual drum stem files, and now you wish to apply all that same editing to every stem recording in the group.
 
-In all of these cases, the _"Manually Select Files To Use"_ feature during Pre-Paste affords you this ability!
+In all of these scenarios (and likely many more), the _"Manually Select Files To Use"_ feature provides a solution!
+
+Here is a diagram for how it can be used:
+
+
 
 
 
 ### Fix broken/missing sources:
+
+As an extention of what manual file selection can do, you can also fix broken/missing sources like so:
 
 ![How to fix broken/missing sources using AudioClipboard](https://raw.githubusercontent.com/GhostsonAcid/AudioClipboard/refs/heads/main/AudioClipboard_How_To_Fix_Broken_Sources.jpg)
 
