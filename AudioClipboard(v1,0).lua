@@ -1,6 +1,6 @@
 ardour {
   ["type"] = "EditorAction",
-  name = "AudioClipboard",
+  name = "AudioClipboard (v1.0)",
   license = "GPL",
   author = "Joseph K. Lookinland",
   description = [[     This script lets you 'copy and paste' selected mono and
@@ -99,7 +99,11 @@ function factory() return function()
   6. As far as I'm concerned, MIDI copying and pasting doesn't need to be implemented into AudioClipboard ever because exporting MIDI regions is already
      easy in Ardour (-select the MIDI region, then click Region -> Export...).  It's just not worth the time implementing it if you can already do that.
 
-  7. People on the forum have been wanting to copy and paste audio regions between sessions/snapshots basically since Ardour's inception.  So, hopefully
+  7. Getting a binding for enabling/disabling the preferences setting "Move relevant automation when audio regions are moved" would allow this script to
+     simply disable it before any Pre-Paste or Paste action, and then re-enable it (if it was enabled prior) afterwards.  Thus the warning in the opening
+     window (and in the README file, etc.) could also be eliminated.
+
+  8. People on the forum have been wanting to copy and paste audio regions between sessions/snapshots basically since Ardour's inception.  So, hopefully
      one day the devs of Ardour will finally implement some functionality like that *directly into Ardour itself*, and thus make this script obsolete.
      But, given their reaction to the idea over the years, it appears that this may never happen... (In my opinion, they should at least implement a
      selectable option to export audio regions with ALL original envelope, fade, gain, etc., data somehow attached to it.  Then you could simply export
@@ -438,7 +442,7 @@ function factory() return function()
       "your regions appear! ~Done!\n\n\n" ..
       "                              ⚠ WARNING:\n\n" ..
       "         Due to the way in which sources and regions are handled via this script, if \"Move relevant automation when " ..
-      "audio regions are moved\" (-under Preferences > Editor) is turned ON during a Pre-Paste or Paste function into an area with " ..
+      "audio regions are moved\" (-under Preferences > Editor) is turned ON during a use of Pre-Paste or Paste into an area with " ..
       "ANY automation on the track (e.g. fader, pan, plugin, etc.), repeated sliding and ultimately destruction of original automation " ..
       "curves will occur. Therefore, if you MUST leave that setting on but want to avoid this destruction, then simply paste your " ..
       "regions onto an empty, throwaway track, and then just move them on from there."
