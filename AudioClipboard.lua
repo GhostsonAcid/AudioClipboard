@@ -1,6 +1,6 @@
 ardour {
   ["type"] = "EditorAction",
-  name = "AudioClipboard (v1.0)",
+  name = "AudioClipboard",
   license = "GPL",
   author = "Joseph K. Lookinland",
   description = [[     This script lets you 'copy and paste' selected mono and
