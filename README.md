@@ -129,7 +129,7 @@ As an extension of what manual file selection can do, you can also fix broken/mi
 
 ### Full Track & Regions Duplication
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This script can be used in conjunction with Ardour's built-in track-template-creator to achieve full track and region duplication from one session/snapshot into another. (Perhaps down the road I will implement this feature directly into AudioClipboard itself.  But for now, this method will suffice!)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This script can be used in conjunction with Ardour's built-in track-template-creator to achieve full track and region duplication from one session/snapshot into another.  If you are looking to merge Ardour songs/projects, this is the way to do it.  (Perhaps at some point I will implement this feature directly into AudioClipboard itself.  But for now, this method will suffice!)
 
 **1. Right-click on an audio mixer strip's name, then use "Save As Template...".**
 
