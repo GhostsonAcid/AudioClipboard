@@ -167,7 +167,7 @@ AudioClipboard has been tested thoroughly on macOS Mojave running multiple copie
 
 ### Final Comments
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For anyone interested in how any of this works, I've included hundreds of --muted notes all throughout the script itself, describing each step of the process in oftentimes considerable detail.  Although I now have something like 100-150 pages of hand-writen notes and typed-up documents describing the logic, flow, and structure of various parts of AudioClipboard, I decided it was best to simply incorporate notes and descriptions directly into the script itself, -for myself down the road, as well as any others who are interested (or those looking to address a bug or two).
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For anyone interested in how any of this works, I've included hundreds of --muted notes all throughout the script itself, describing each step of the process in oftentimes considerable detail.  Although I now have something like 100-150 pages of hand-writen notes and typed-up documents describing the logic, flow, and structure of various parts of AudioClipboard, I decided it was best to simply incorporate notes and descriptions directly into the script itself (as is common), -for myself down the road, as well as any others who are interested (or those looking to address a bug or two).
 
 Also, _thanks to @izlence_ for establishing the basic premise for AudioClipboard with their [ardour-scripts](https://github.com/izlence/ardour-scripts) GitHub project! 👍
 
