@@ -297,14 +297,14 @@ function factory() return function()
 
   -- Updated function to infer fade lengths AND shapes directly from the XML...
   -- By carefully analyzing various .ardour files, I arrived at those numbers (of 0.0's, 0.9's, etc.) associated with the various fade shapes:
-  local function analyze_fade_events(events, label)
+  local function analyze_fade_events(events, label) -- Feed this function the "events" (from the XML) you wish to have analyzed.
 
     -- Note that fades from older versions of Ardour (like A2) that were migrated into A8+ used DIFFERENT shapes, and thus different numbers/etc...
     -- But, ones that cannot readily/easily be recreated unless a catalog of purely original data points were to be saved into TSV1...
     -- I'm not going to do that, so the next best option is to simply use the *closest shape* Ardour now provides (one of the five available).
 
     local is_legacy = false
-    local is_fade_in = (label == "FadeIn")
+    --local is_fade_in = (label == "FadeIn") -- Old; not needed anymore.
 
     if not events then
       debug_print("No events block found for:", label)
@@ -321,7 +321,7 @@ function factory() return function()
     -- Fade length calculation (in samples):
     local last_pos = positions[#positions]
     local sr = Session:nominal_sample_rate()
-    local units_per_sample = 282240000 / sr
+    local units_per_sample = 282240000 / sr ---------------------------------------------------------
     local fade_length = last_pos and math.floor(last_pos / units_per_sample + 0.5) or 64 -- Fallback to the minimum standard of 64 samples if something went wrong...
 
     -- Fade-shape determination/inferring begins (-this logic was actually pretty fun to setup)...
@@ -422,7 +422,8 @@ function factory() return function()
   
   local main_result = main_dialog:run()
   if not main_result then return end
-  local action = tostring(main_result["main_action"] or ""):gsub("^%s*(.-)%s*$", "%1")
+
+  local action = tostring(main_result["main_action"])
 
   -----------------------------------------------------------------------------------------------------------------------------
   ------------------------------------------------------- HELP DIALOG ---------------------------------------------------------
@@ -736,7 +737,7 @@ function factory() return function()
         end
       end
 
-      -- Predeclare for both branches to fill in
+      -- Predeclare all 8 original_* and final_* fields:
       local original_source_location
       local original_source_type
       local original_io_code
@@ -761,40 +762,40 @@ function factory() return function()
           original_source_location = "TREE" -- = In this project's file-tree, but NIAF; -Great for catching files in exports/ and handling them more like IAF files later on.
 
         else
-          original_source_location = "NIAF" -- = Not in any audiofiles/ folder.
+          original_source_location = "NIAF" -- = Not in any audiofiles/ folder, or Session A's project folder/subfolders.
         end
 
         -- 6. original_source_type
         original_source_type = "Undetermined" -- The immediate default for each.
 
         if used_channel_count == 2 then
-          original_source_type = "Stereo"
+          original_source_type = "Stereo" -- Will mutate to "DualMono" in a moment if that is what is detected...
         elseif used_channel_count == 1 then
           if used_channel_type == 1 then
-            original_source_type = "Stereo"
+            original_source_type = "Stereo" -- Same as ^...
           end
         end
 
         -- 7. original_io_code
-        original_io_code = 0  -- Doesn't exist; just a default value; if you see this in a TSV file, then something went wrong.
+        original_io_code = 0 -- Doesn't exist as an import_option (IO); just a placeholder value.
 
         -- DualMono Logic Tag
         local is_dm, lr_type, other_path, _ = detect_dualmono_pair(path)
 
         if original_source_location == "IAF" then
 
-          if is_dm then
-            original_source_type = "DualMono"
-            original_io_code = 1  -- Region coming from a %L+%R (DualMono) pair.
+          if is_dm then -- If 'is DualMono' returns true, then...
+            original_source_type = "DualMono" -- Mutate the type to "DualMono" accordingly.
+            original_io_code = 1
           else
-            original_io_code = 2  -- A whole mono or stereo file (or a rare and lonely %L or %R file, etc.)...
+            original_io_code = 2 -- A whole mono or stereo file (or a rare and lonely %L or %R file, etc.)...
           end
 
         elseif original_source_location == "TREE" then
-          original_io_code = 2  -- Treated the same as IAF mono or stereo (-will find out later during IO2...)
+          original_io_code = 2 -- Treated the same as IAF mono or stereo (-will find out later during IO2...)
 
         elseif original_source_location == "NIAF" then
-          original_io_code = 3  -- Treated the same as IAF mono or stereo (-will find out later during IO3...)
+          original_io_code = 3
         end
 
         -- 8. original_source_path
