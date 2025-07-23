@@ -588,8 +588,11 @@ function factory() return function()
       return
     end
 
-    local tsv1_entries = {} -- Store TSV1 lines before writing.
-    local copied = 0 -- A counter used for the final popup.
+    local tsv1_entries = {} -- Our main table to store our TSV1 lines before writing them back 'to disk'.
+
+    local copied_topmost_regions = 0 -- A region counter that counts topmost regions only (-no 'child' regions are added); used for the final popup.
+    local copied_unique_sources = 0 -- A counter used for the unique sources encountered during copying (-across all non-child and child regions); also used for the final popup.
+    local unique_sources_seen = {} -- A table used to keep track of unique sources encountered/seen (-for the previous tally).
 
     -- Sort the regions (ultimately into TSV 1) via LAYER positioning (& Time)!
     -- This is crucial, as without it certain opaque regions might (during pasting) find themselves on-top of other regions they were once below, etc... (-> Not good!)
@@ -1098,7 +1101,14 @@ function factory() return function()
       -- Insert all 45 fields, once per (top-layer) region, directly into tsv1_entries:
       table.insert(tsv1_entries, entry_full_info)
 
-      copied = copied + 1
+      copied_topmost_regions = copied_topmost_regions + 1 -- Add each topmost region to our tally.
+
+      -- Mutate our unique_sources_seen table and copied_unique_sources counter accordingly:
+      if not unique_sources_seen[original_source_path] and not is_compound then -- Avoid adding parent/combined/compound regions (which have no valid osp).
+        unique_sources_seen[original_source_path] = true
+        copied_unique_sources = copied_unique_sources + 1 -- Increase our copied_unique_sources counter by 1 if the source is truly unique.
+      end
+
       ::skip::
     end
 
@@ -1627,9 +1637,15 @@ function factory() return function()
           -- Insert all 45 fields, once per child, into tsv1_entries_by_layer[child_layer]:
           table.insert(tsv1_entries_by_layer[child_layer], entry_full_info)
 
-        end
-      end
-    end
+          -- Again, mutate our unique_sources_seen table and copied_unique_sources counter accordingly:
+          if not unique_sources_seen[original_source_path] and not is_compound then -- Avoid adding parent/combined/compound regions (which have no valid osp).
+            unique_sources_seen[original_source_path] = true
+            copied_unique_sources = copied_unique_sources + 1
+          end
+
+        end -- Ends "for idx, r in ipairs(current_siblings) do".
+      end -- Ends "for _, current_parent_id in ipairs(input_parents) do"
+    end -- Ends the process_child_layer function.
 
     if debug_pause and debug_pause_popup("Copy STEP 4: Prepare for Additional Looping (for Any Compound/Combined/Parent-Regions") then return end
 
@@ -1720,15 +1736,30 @@ function factory() return function()
       flush_tsv1(tsv1_entries)
     end
 
+    -- Some stuff for custom text in the popup(s):
+    local regions_plural = "s"
+    local possession = "their"
+    local sources_plural = "s"
+
+    if copied_topmost_regions == 1 then -- If only one region was copied, then mutate the text accordingly...
+      possession = "its"
+      regions_plural = "" -- Erase the "s" (so "regions" --> "region" in the final popup).
+    end
+
+    if copied_unique_sources == 1 then
+      sources_plural = "" -- Erase the "s" (so "sources" --> "source" in the final popup).
+    end
+
     -- Initiate a final Copy Logic dialog...
     -- The 'normal' message to show if no compound regions were ever copied:
     if not compound_processing then
       LuaDialog.Message(
         "Copying Complete!",
         string.format(
-          "%d audio region(s) copied successfully!\n\nYou may now Pre-Paste their sources into other sessions.\n\n" ..
+          "%d audio region%s copied successfully!\n\nYou may now Pre-Paste %s %d required\nsource%s into your destination session.\n\n" ..
+          "-------------------------------------------------------\n\n" .. -- Include a nice divider line.
           "For those curious, the region data has been saved to:\n%s",
-          copied, tsv1_path
+          copied_topmost_regions, regions_plural, possession, copied_unique_sources, sources_plural, tsv1_path
         ),
         LuaDialog.MessageType.Info,
         LuaDialog.ButtonType.Close
@@ -1741,10 +1772,11 @@ function factory() return function()
       LuaDialog.Message(
         "Copying Complete!",
         string.format(
-          "%d audio region(s) copied successfully!\n\nYou may now Pre-Paste their sources into other sessions.\n\n" ..
-          "For those curious, the region data has been saved to:\n%s\n\n" ..
-          "This script will now cleanup any\ntemporary regions from the timeline.",
-          copied, tsv1_path -- Still displays just the original number of copied regions (i.e. NOT including any child regions)...
+          "%d audio region%s copied successfully!\n\nYou may now Pre-Paste %s %d required\nsource%s into your destination session.\n\n" ..
+          "This script will now cleanup any\ntemporary regions from the timeline.\n\n" ..
+          "-------------------------------------------------------\n\n" ..
+          "For those curious, the region data has been saved to:\n%s",
+          copied_topmost_regions, regions_plural, possession, copied_unique_sources, sources_plural, tsv1_path
         ),
         LuaDialog.MessageType.Info,
         LuaDialog.ButtonType.Close
@@ -3655,7 +3687,7 @@ function factory() return function()
         ["Option 2 - View File List"] = "viewlist",
         ["Option 3 - Manually Select Files To Use"] = "manselect",
         ["Option 4 - Re-Run Source Finder Wizard"] = "wizard",
-        ["Option 5 - Erase ID Cache"] = "erasecache"
+        ["Option 5 - Erase Local ID Cache"] = "erasecache"
       },
       default = "proceed"
     }
@@ -4156,11 +4188,11 @@ function factory() return function()
       goto restart_prepaste
     end
 
-    ----------------------------------------------------------------------------------------------------
-    ------------------------- Main Pre-Paste Window: Option 5 - Erase ID Cache -------------------------
-    ----------------------------------------------------------------------------------------------------
+    ----------------------------------------------------------------------------------------------------------
+    ------------------------- Main Pre-Paste Window: Option 5 - Erase Local ID Cache -------------------------
+    ----------------------------------------------------------------------------------------------------------
 
-    -- If "Erase ID Cache" was chosen from the main Pre-Paste window:
+    -- If "Erase Local ID Cache" was chosen from the main Pre-Paste window:
     if user_choice == "erasecache" then
 
       local num_entries = 0
