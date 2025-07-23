@@ -3,12 +3,10 @@ ardour {
   name = "AudioClipboard",
   license = "GPL",
   author = "Joseph K. Lookinland",
-  description = [[     This script lets you 'copy and paste' selected mono and
+  description = [[       This script lets you 'copy and paste' selected mono and
   stereo audio regions between project sessions/snapshots,
   with almost all original region data being preserved in the
-  process.
-  
-                                 (2025-07-06)]]
+  process. (v1.0; Released 2025-07-25)]]
 }
 
 -- Draw a custom clipboard icon:
@@ -100,8 +98,11 @@ function factory() return function()
      easy in Ardour (-select the MIDI region, then click Region -> Export...).  It's just not worth the time implementing it if you can already do that.
 
   7. Getting a binding for enabling/disabling the preferences setting "Move relevant automation when audio regions are moved" would allow this script to
-     simply disable it before any Pre-Paste or Paste action, and then re-enable it (if it was enabled prior) afterwards.  Thus the warning in the opening
-     window (and in the README file, etc.) could also be eliminated.
+     simply disable it before any Pre-Paste(?) or (definitely) Paste action, and then re-enable it (if it was enabled prior) afterwards.  Thus the warning
+     in the opening window (and in the README file, etc.) could also be removed. (Also, I'm pretty sure that since 'normal' (non-compound) regions are
+     added to a track's playlist AFTER their 'creation'/trimming/positioning/etc. that NO automation disruption ever occurs for them during pasting.  At
+     this point it appears to only be a problem when pasting *combined/compound/parent regions*, probably(?) because they are combined and in that process
+     are immediately added to the track's playlist, but then trimming/positioning still has to occur (-thus moving any automation with it/them).)
 
   8. People on the forum have been wanting to copy and paste audio regions between sessions/snapshots basically since Ardour's inception.  So, hopefully
      one day the devs of Ardour will finally implement some functionality like that *directly into Ardour itself*, and thus make this script obsolete.
@@ -423,9 +424,6 @@ function factory() return function()
   if not main_result then return end
   local action = tostring(main_result["main_action"] or ""):gsub("^%s*(.-)%s*$", "%1")
 
-  -- Save the session; helps prevent crashing when pre-pasting onto a fresh track (where the session wasn't yet saved), etc.:
-  Session:save_state("", false, false, false, false, false)
-
   -----------------------------------------------------------------------------------------------------------------------------
   ------------------------------------------------------- HELP DIALOG ---------------------------------------------------------
   -----------------------------------------------------------------------------------------------------------------------------
@@ -475,6 +473,9 @@ function factory() return function()
   -----------------------------------------------------------------------------------------------------------------------------
 
   if action == "copy" then
+
+    -- Save the session; precautionary; just in case something goes wrong and Ardour crashes somehow (which seems very, very, very unlikely here)):
+    Session:save_state("", false, false, false, false, false)
 
     local sel = Editor:get_selection()
     local region_list = sel and sel.regions and sel.regions:regionlist()
@@ -1803,6 +1804,9 @@ function factory() return function()
   -----------------------------------------------------------------------------------------------------------------------------
 
   if action == "prepaste" then
+
+    -- Save the session; helps prevent crashing when pre-pasting onto a fresh track (where the session wasn't saved yet), etc.(?):
+    Session:save_state("", false, false, false, false, false)
 
     -- Define the paths used for our TSV files:
     local tsv1_path = ARDOUR.LuaAPI.build_filename(get_temp_dir(), "AudioClipboard.tsv")
@@ -3687,7 +3691,7 @@ function factory() return function()
       
       -- Classify each PP1 entry into one of the above categories based on final_io_code (1 = dualmono, 2 = import, 3 = embed).
       for _, entry in pairs(PP1) do
-        local path = entry.final_source_path
+        local path = entry.final_source_path -- Ultimately display the fsp only, not the osp.
         local final_code = tonumber(entry.final_io_code)
         local group_name = "Skipped (i.e. Redundant or Present) File(s)" -- Default to the "Skipped" category.
 
@@ -5112,6 +5116,9 @@ function factory() return function()
   -----------------------------------------------------------------------------------------------------------------------------
 
   if action == "paste" then
+
+    -- Save the session; precautionary; just in case something goes wrong and Ardour crashes somehow (which seems very, very, very unlikely here)):
+    Session:save_state("", false, false, false, false, false)
 
     -- Establish our paths to our TSV files:
     local tsv1_path = ARDOUR.LuaAPI.build_filename(get_temp_dir(), "AudioClipboard.tsv")
