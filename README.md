@@ -76,7 +76,7 @@ Simply download the [AudioClipboard.lua](https://github.com/GhostsonAcid/AudioCl
 ## How to use AudioClipboard
 
 > [!NOTE]
-> Before using AudioClipboard for considerable copy-paste work, it is strongly recommended to duplicate the Ardour application itself (and rename it if necessary) so you can have two projects open at the same time.  Without doing this, you would have to close and open entire projects with each copy and paste action, which is obviously silly.
+> Before using AudioClipboard for any considerable work, it is strongly recommended to duplicate the Ardour application itself (and rename it/them if necessary) so you can have two projects open at the same time.  Without doing this, you would have to close and open entire projects with each copy and paste action, which is obviously silly. _(-If you are using Windows, however, duplicating Ardour might be [difficult or downright impossible.](https://discourse.ardour.org/t/using-multiple-copies-of-ardour-simultaneously/112031/3?u=ghostsonacid)  As of now, this is untested by me.)_
 
 ### Step 1 - Copy Regions
 
