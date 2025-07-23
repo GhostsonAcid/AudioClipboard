@@ -318,13 +318,13 @@ function factory() return function()
       table.insert(values, tonumber(val_str))
     end
 
-    -- Fade length calculation (in samples)
+    -- Fade length calculation (in samples):
     local last_pos = positions[#positions]
     local sr = Session:nominal_sample_rate()
     local units_per_sample = 282240000 / sr
     local fade_length = last_pos and math.floor(last_pos / units_per_sample + 0.5) or 64 -- Fallback to the minimum standard of 64 samples if something went wrong...
 
-    -- Fade shape determination:
+    -- Fade-shape determination/inferring begins (-this logic was actually pretty fun to setup)...
     local shape = "Undetermined" -- Initial placeholder.
     local count = #values
 
