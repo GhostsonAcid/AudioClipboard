@@ -113,12 +113,12 @@ Beyond basic copying and pasting, manually selecting which sources to use for pa
 - A project's Source List might be cluttered with duplicate entries, and you'd like to clean it up.
 - You might be working with lower-quality sources (-like compressed MP3s), but now you wish to 'swap them out' for better sources while maintaining all of the original envelope, gain, trimming, etc..
 - You might also just prefer having certain regions link to sources located in a new/different/updated folder (or even a different SSD/HDD).
-- You have some broken/missing sources that you just cannot seem to fix, although you do have new sources that would be suitable replacements (-see the next portion).
 - You have already edited (e.g. cut, trimmed, positioned, etc.) a full, combined drum mix recording, but you realize you actually have access to the individual drum stem files, and now you wish to apply all that same editing to every stem recording in the group.
+- You have some broken/missing sources that you just cannot seem to fix, although you do have new sources that would be suitable replacements (-see the next portion).
 
 In all of these scenarios (and likely many more), the _"Manually Select Files To Use"_ feature provides a solution!
 
-Here is a diagram for how it can be used:
+Here is an example for how it can be used:
 
 ![Manual File Selection Example](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Manual_File_Selection.jpg)
 
@@ -130,7 +130,7 @@ As an extension of what manual file selection can do, you can also fix broken/mi
 
 ### Full Track & Regions Duplication
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This script can be used in conjunction with Ardour's built-in track-template-creator to achieve full track and region duplication from one session/snapshot into another.  If you are looking to merge Ardour songs/projects, this is the way to do it.  (Perhaps at some point I will implement this feature directly into AudioClipboard itself.  But for now, this method will suffice!)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This script can be used in conjunction with Ardour's built-in track-template-creator to achieve full track and region duplication from one session/snapshot into another.  If you are looking to merge Ardour songs/projects, this is the way to do it.  (Perhaps at some point I will implement this ability directly into AudioClipboard itself.  But for now, this method will suffice!)
 
 #### 1. Right-click on an audio mixer strip's name, then use "Save As Template...".
 
