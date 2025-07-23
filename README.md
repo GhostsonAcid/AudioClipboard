@@ -195,6 +195,9 @@ Here is a diagram depicting the flow of this Pre-Paste 'decision-making' process
 
 ![Pre-Paste Flowchart](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Pre-Paste_Flowchart.jpg)
 
+> [!NOTE]
+> As a technical side-note, you might notice in the picture above that I never actually use do_import (-Ardour's import command-) ever once.  Instead, I have opted for more control by directly duplicating source files into `audiofiles/` of the destination session, and then using do_embed upon them.  This essentially mimics the do_import action, yet affords AudioClipboard precise naming control so that, for example, legacy dual-mono pairs that use -L/-R endings instead of the modern %L/%R can be upgraded appropriately in the process, thus _Guitar_take14-L.wav_ is renamed to → _Guitar_take14%L.wav_ (-if and only if it's actually a part of a dual-mono pair, of course).
+
 -----------------------------------------------------------------------------------------------------------------------------
 
 ## Other Notes
