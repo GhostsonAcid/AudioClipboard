@@ -9,7 +9,7 @@ AudioClipboard _(AudioClipboard.lua)_ is a Lua script designed to be run in the 
 ### Features
 
 - Works with audio regions, mono and stereo.
-- Easy to use, 3-step process: ***Copy → Pre-Paste → Paste***
+- Easy to use, 3-step process: [***Copy → Pre-Paste → Paste***](#how-to-use-audioclipboard)
 - Pasted regions retain all original position, trim, envelope, gain, polarity, fade length/shape data, etc..
 - Avoids most re-embedding or re-importing of files already present in the project during Pasting.
 - By default, original relationships to source materials are preserved almost 1:1, but there's also...
@@ -18,11 +18,11 @@ AudioClipboard _(AudioClipboard.lua)_ is a Lua script designed to be run in the 
 - Handles combined audio regions (-although Ardour currently suffers from [many combined region bugs](https://discourse.ardour.org/t/better-compound-region-handling/111930), which can occasionally cause various problems in attempts to copy them, despite my best efforts).
 - There's a built-in 'Source Finder Wizard' that automatically discovers potential source matches (via similar naming) during Pre-Paste, and offers them for approval. (This feature helps reduce redundant or unecessary imports/embeds.)
 - All contained in a single, standalone Lua script.
-- The Paste action is an undoable command _(via ctrl-Z/cmd-Z, etc.)._
+- The Paste action is an undoable command (via ctrl-Z/cmd-Z, etc.).
 - File-collisions and accidental erasures are prevented behind the scenes via simple file-name checks.
 - Legacy Dual-Mono stereo pairs (with -L/-R endings) are automatically modernized during pre-paste by renaming them with standard (%L/%R) endings.
 - Legacy fade shapes inherited from older versions of Ardour (like v2, etc.) are automatically detected and replaced during pasting with their closest modern equivalents. (-And the user is informed about this.)
-- Under GPL, thus: 100% free to use, copy, alter, distribute, etc.!
+- Under the GNU General Public License (GPL), thus: 100% free to use, copy, alter, distribute, etc.!
 
 ### Known Limitations/Warnings
 
@@ -30,8 +30,8 @@ AudioClipboard _(AudioClipboard.lua)_ is a Lua script designed to be run in the 
 - It doesn't work with anything MIDI, but this is okay because transferring MIDI regions is easy thanks to Ardour's built-in region export function _(-select the MIDI region, then click Region → Export...)._
 - It sometimes fails to properly handle combined/compound regions, mostly due to [known Ardour bugs](https://tracker.ardour.org/view.php?id=9947).
 
-> [!WARNING]
-> - AudioClipboard has the potential to disturb/destroy automation curves (plugin/fader/pan/etc.) on a track if the setting _"Move relevant automation when audio regions are moved" (-under Preferences → Editor)_ is NOT disabled during Pre-Pasting/Pasting.  ***→ So PLEASE be sure to DISABLE that setting BEFORE using AudioClipboard!***
+> [!CAUTION]
+> - Due to the way in which AudioClipboard pastes regions, this script has the potential to disturb/destroy **automation curves** (-plugin/fader/pan/etc.) on a track if the setting _"Move relevant automation when audio regions are moved" (-under Preferences → Editor)_ is NOT disabled during Pasting. **This is especially true for pasting combined regions.** ***→ So PLEASE be sure to DISABLE that setting BEFORE using AudioClipboard!***
 
 -----------------------------------------------------------------------------------------------------------------------------
 
