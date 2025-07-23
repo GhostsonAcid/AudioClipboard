@@ -23,7 +23,8 @@ AudioClipboard _(AudioClipboard.lua)_ is a Lua script designed to be run in the 
 - Legacy Dual-Mono stereo pairs (with -L/-R endings) are automatically modernized during pre-paste by renaming them with standard (%L/%R) endings.
 - Legacy fade shapes inherited from older versions of Ardour (like v2, etc.) are automatically detected and replaced during pasting with their closest modern equivalents. (-And the user is informed about this.)
 - Automatically saves your session before any step is executed so that if something goes wrong and Ardour crashes (which is very unlikely), then no previous work is lost.
-- Under the GNU General Public License (GPL), thus: 100% free to use, copy, alter, distribute, etc.!
+- Handles all project/region sample-rates (-44.1 kHz, 48 kHz, 96 kHz, etc.).
+- Under the GNU General Public License (GPL), thus 100% free to use, copy, alter, distribute, etc.!
 
 ### Known Limitations/Warnings
 
@@ -123,7 +124,7 @@ With that same (or whichever) audio track selected, use the "Paste Regions" func
 - Sync Position
 - Fade Before Fx (on or off)
 - Compound State (-Whether the region is a combined one or not; these are handled dramatically differently, but still as accurately as possible.)
-- Region Layering _([→ See Example 2 below...](#example-2))_
+- Region Layering _([→ See Example 2 below...](#example-22))_
 
 ### Example 1/2
 
@@ -133,7 +134,7 @@ Here is an example of AudioClipboard's pasting accuracy in action (→ with arro
 
 ### Example 2/2
 
-AudioClipboard even handles complicated (and nonsensical) region layering without any issue:
+AudioClipboard even reconstructs complicated _(and nonsensical)_ region layering without any issue:
 
 ![AudioClipboard Copy Paste Accuracy Example 2](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Copy_Paste_Accuracy_Example_2.png)
 
@@ -204,6 +205,12 @@ AudioClipboard has been tested thoroughly on macOS Mojave running multiple copie
 
 > [!IMPORTANT]
 > If you experience any bugs with this script, please submit an "Issue" here on GitHub, or post about it/them on the Ardour forum (discourse.ardour.org) and link @GhostsonAcid in your comment, and I will try to address it.
+
+### Help
+
+If you need help setting something up, or are having any difficulties that you would like addressed, please don't hesitate to [utilize the Ardour Forum](https://discourse.ardour.org/).  The developers of Ardour and the users in general are quite responsive and friendly!
+
+For more information on using Lua scripts in Ardour, you can visit [the Ardour manual's section on it](https://manual.ardour.org/lua-scripting/).
 
 ### Final Thanks
 
