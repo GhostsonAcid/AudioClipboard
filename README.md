@@ -148,6 +148,8 @@ As an extension of what manual file selection can do, you can also fix broken/mi
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In short, Audio Clipboard works by externally logging all relevant and available data for the copied regions into a file called "AudioClipboard.tsv" in a temporary folder offered by your computer.  Then, during Pre-Paste, it scans for already-present, usable sources, creates a local 'Region ID Cache' (-another, more permanent .tsv file located in your project's `interchange/` directory), and ultimately imports/embeds the remaining sources needed for successful pasting.  And finally, during Pasting, it then clones new audio regions into existence via IDs provided by the local cache, and utilizes the data in AudioClipboard.tsv to recreate the copied regions, with original region size, trim, position, gain, envelope, fade lengths, and other states all being preserved in the process.
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For further deatil, I've included hundreds of --muted notes all throughout the script itself, describing each step of the process in oftentimes considerable detail.  Although I now have something like 100-150 pages of hand-writen notes and typed-up documents describing the logic, flow, and structure of various parts of AudioClipboard, I decided it was best to simply incorporate notes and descriptions directly into the script itself (as is common), -for myself down the road, as well as any others who are interested (or those looking to address a bug or two).
+
 ### The Pre-Paste Process
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;At the heart of AudioClipboard is what happens during the "Pre-Paste" process.  Depending on where copied region's sources are located on your computer, the sources that are 'pre-pasted' must be handled uniquely.  Instead of letting Ardour just blindly import (and convert to .wav) any and all source files into each project's `audiofiles/` folder, I decided to take the approach of preserving region-to-source relationships as close to 1:1 as possible.  Thus, for example, if a copied region is coming from a source that is _embedded,_ then when that same source is 'pre-pasted' into a different session, that particular source will be embedded there as well, _-not imported._  Similarly, if a copied region's source is coming from a standard %L/%R (.wav) file pair already imported into the project, then that pair will be duplicated into the other session's `audiofiles/` folder accordingly thus, again, preserving the original region-to-source relationships. And so on...
@@ -155,6 +157,8 @@ As an extension of what manual file selection can do, you can also fix broken/mi
 Here is a diagram depicting the flow of this Pre-Paste 'decision-making' process:
 
 ![Pre-Paste Flowchart](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Pre-Paste_Flowchart.jpg)
+
+-----------------------------------------------------------------------------------------------------------------------------
 
 ## Other Notes
 
@@ -165,15 +169,16 @@ AudioClipboard has been tested thoroughly on macOS Mojave running multiple copie
 > [!IMPORTANT]
 > If you experience any bugs with this script, please submit an "Issue" here on GitHub, or post about it/them on the Ardour forum (discourse.ardour.org) and link @GhostsonAcid in your comment, and I will try to address it.
 
-### Final Comments
+### Final Thanks
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For anyone interested in how any of this works, I've included hundreds of --muted notes all throughout the script itself, describing each step of the process in oftentimes considerable detail.  Although I now have something like 100-150 pages of hand-writen notes and typed-up documents describing the logic, flow, and structure of various parts of AudioClipboard, I decided it was best to simply incorporate notes and descriptions directly into the script itself (as is common), -for myself down the road, as well as any others who are interested (or those looking to address a bug or two).
+_Thanks to @izlence_ for establishing the basic premise for AudioClipboard with their [ardour-scripts](https://github.com/izlence/ardour-scripts) GitHub project! 👍
 
-Also, _thanks to @izlence_ for establishing the basic premise for AudioClipboard with their [ardour-scripts](https://github.com/izlence/ardour-scripts) GitHub project! 👍
+And thank <ins>you</ins> for reading, and I hope AudioClipboard can help some others out there as much as it has helped me!
 
 -----------------------------------------------------------------------------------------------------------------------------
 
-Thank you for reading, and I hope this script helps some others out there as much as it has helped me!
+_Remember: **It all goes back to music...**_\
+🎵 FOCUS ON THE MUSIC! 🎵
 
 _~Enjoy!_
 
