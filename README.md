@@ -14,9 +14,9 @@ AudioClipboard _(AudioClipboard.lua)_ is a Lua script designed to be run in the 
 - Avoids most re-embedding or re-importing of files already present in the project during Pasting.
 - By default, original relationships to source materials are preserved almost 1:1, but there's also...
 - An option to manually select different files to use for pasting. (This is super convenient for cleaning-up projects in general, and even fixing broken sources (→ [see the examples below](#use-cases-and-other-features).)
-- Handles combined audio regions (-although Ardour currently suffers from [many combined region bugs](https://discourse.ardour.org/t/better-compound-region-handling/111930), which can occasionally cause various problems in attempts to copy them, despite my best efforts).
 - Handles -L/-R regions that came from a use of "Make Mono Regions".
-- There's a built-in 'Source Finder Wizard' that automatically discovers potential source matches (via similar naming) during Pre-Paste, and offers them for approval.  This feature helps reduce redundant or unecessary imports/embeds.
+- Handles combined audio regions (-although Ardour currently suffers from [many combined region bugs](https://discourse.ardour.org/t/better-compound-region-handling/111930), which can occasionally cause various problems in attempts to copy them, despite my best efforts).
+- There's a built-in 'Source Finder Wizard' that automatically discovers potential source matches (via similar naming) during Pre-Paste, and offers them for approval. (This feature helps reduce redundant or unecessary imports/embeds.)
 - All contained in a single, standalone Lua script.
 - The Paste action is an undoable command _(via ctrl-Z/cmd-Z, etc.)._
 - File-collisions and accidental erasures are prevented behind the scenes via simple file-name checks.
