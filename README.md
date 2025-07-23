@@ -2,7 +2,7 @@
 
 ## Basic Description
 
-AudioClipboard (via AudioClipboard.lua) is a script designed to be run in the Ardour DAW (v8.12+) that allows one to copy and paste mono and stereo audio regions between projects/sessions/snapshots.
+AudioClipboard _(AudioClipboard.lua)_ is a Lua script designed to be run in the Ardour DAW (v8.12+) that allows one to copy and paste mono and stereo audio regions between projects/sessions/snapshots, whilst maintaining virtually all of the region data in the process.
 
 ![AudioClipboard Opening Window](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Opening_Window.png)
 
@@ -13,7 +13,7 @@ AudioClipboard (via AudioClipboard.lua) is a script designed to be run in the Ar
 - Pasted regions retain all original position, trim, envelope, gain, polarity, fade length/shape data, etc..
 - Avoids most re-embedding or re-importing of files already present in the project during Pasting.
 - By default, original relationships to source materials are preserved almost 1:1, but there's also...
-- An option to manually select different files to use for pasting. (This is super convenient for cleaning-up projects in general, and even fixing broken sources; -See the examples below...)
+- An option to manually select different files to use for pasting. (This is super convenient for cleaning-up projects in general, and even fixing broken sources (→ [see the examples below](#use-cases-and-other-features).)
 - Handles combined audio regions (-although Ardour currently suffers from [many combined region bugs](https://discourse.ardour.org/t/better-compound-region-handling/111930), which can occasionally cause various problems in attempts to copy them, despite my best efforts).
 - Handles -L/-R regions that came from a use of "Make Mono Regions".
 - There's a built-in 'Source Finder Wizard' that automatically discovers potential source matches (via similar naming) during Pre-Paste, and offers them for approval.  This feature helps reduce redundant or unecessary imports/embeds.
@@ -131,15 +131,15 @@ As an extension of what manual file selection can do, you can also fix broken/mi
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This script can be used in conjunction with Ardour's built-in track-template-creator to achieve full track and region duplication from one session/snapshot into another.  If you are looking to merge Ardour songs/projects, this is the way to do it.  (Perhaps at some point I will implement this feature directly into AudioClipboard itself.  But for now, this method will suffice!)
 
-**1. Right-click on an audio mixer strip's name, then use "Save As Template...".**
+#### 1. Right-click on an audio mixer strip's name, then use "Save As Template...".
 
 ![Track Template Creation](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/Track_Template_Creation.gif)
 
-**2. Then, when creating a new track in your destination session/snapshot, use the template you saved.**
+#### 2. Then, when creating a new track in your destination session/snapshot, use the template you saved.
 
 ![Track Template Use](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/Track_Template_Use.gif)
 
-**3. And then simply copy, pre-paste, and paste via AudioClipboard as described earlier!**
+#### 3. And then simply copy, pre-paste, and paste via AudioClipboard as described earlier!
 
 -----------------------------------------------------------------------------------------------------------------------------
 
