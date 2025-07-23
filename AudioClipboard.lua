@@ -2065,34 +2065,6 @@ function factory() return function()
       end
     end
 
-    -- Function to sync the variants of a trio of sources if one has its final_* fields manually changed:
-    local function sync_variants(entry, wipe_ids)
-      local osp = normalize_path(entry.original_source_path)
-      local fsp = normalize_path(entry.final_source_path)
-
-      for uct = 0, 2 do -- Run three times, from uct = 0 -> 1 -> 2.
-        local ucc = (uct == 2) and 2 or 1
-        local key = string.format("%d|%d|%s", ucc, uct, osp)
-        local variant_entry = tsv2_entries[key]
-
-        if variant_entry then
-          local line = variant_entry.line
-
-          line[9] = entry.final_source_location
-          line[10] = entry.final_source_type
-          line[11] = "IO" .. tostring(entry.final_io_code or "0")
-          line[12] = fsp
-          line[13] = (entry.final_source_location == "NIAF" and ucc == 2) and fsp or "Undetermined"
-          line[14] = "Undetermined"
-
-          if wipe_ids then
-            variant_entry.IDs = {} -- Clear saved region ID(s) if requested.
-          end
-          debug_print("sync_variants: Synced variant:", key)
-        end
-      end
-    end
-
     -- Guard: ensure TSV 1 exists and has at least a valid header
     local function ensure_tsv1_exists()
       local tsv1_file_read = io.open(tsv1_path, "r")
@@ -4022,12 +3994,12 @@ function factory() return function()
           })
         end
 
-        -- A function to create 'labels', such as "Original: /Kick.wav --> Current: /Kick.wav", for each dd-menu entry, --------------
-        -- but in a way where if "Original: /Kick.wav --> Current: /Kick.wav" would exist twice (or more times), then we
-        -- 'walk back' each a directory until both are obviously different, and thus display them instead as:
+        -- A function to create 'labels', such as "Original: /Kick.wav --> Current: /Kick.wav", for each dd-menu entry, but in a
+        -- way where if "Original: /Kick.wav --> Current: /Kick.wav" would appear twice (or more times) in the dd-menu, then we
+        -- 'walk back' each a directory until each dd-menu entry is obviously different, and thus display these two examples as:
         -- Original: /drums/Kick.wav --> Current: /drums/Kick.wav
         -- Original: /samples/Kick.wav --> Current: /session2/Kick.wav ...
-        -- -All so that the user can easily differentiate between them, obviously:
+        -- -All so that the user can easily differentiate between them, of course:
         local function build_unique_labels(entries)
 
           -- Track the 'deepest directory depth' (number of segments) for both osp and fsp across all input entries:
@@ -4133,8 +4105,8 @@ function factory() return function()
     
         for _, entry in pairs(tsv2_entries) do
           local line = entry.line
-          if line and line[3] == manselect_entry_ucc and normalize_path(line[8]) == manselect_entry_osp then -- Match based on ucc and osp...
-                                                                                                             -- (-Should just do matching via osp?) --------------
+          if line and normalize_path(line[8]) == manselect_entry_osp then -- Match based on osp only now (as opposed to osp & ucc), which should catch and mutate any and all
+                                                                          -- variants of a potential trio.  Thus we can now delete sync_variants completely from the script.
             -- Apply new final_* and local_source_path values, etc.:
             line[9] = manselect_entry.final_source_location
             line[10] = manselect_entry.final_source_type
@@ -4146,21 +4118,10 @@ function factory() return function()
     
             debug_print("Manselect override applied for:", manselect_entry_osp, "->", manselect_entry_fsp)
             matched = true -- Mark that a matching TSV2 entry was found and updated.
-    
-            -- Sync all other variants to reflect this change: --------------
-            sync_variants({
-              original_source_path  = line[8],
-              final_source_path     = line[12],
-              final_source_location = line[9],
-              final_source_type     = line[10],
-              final_io_code         = tonumber(manselect_entry.final_io_code),
-              used_channel_count    = tonumber(manselect_entry.used_channel_count)
-            }, true)
-
           end
         end
     
-        if not matched then -- Check if a match was made. -If not, then just do a debug_print...
+        if not matched then -- Check if at least one match was made. -If not, then do a debug_print...
           debug_print("No TSV2 match found during override for:", manselect_entry_osp)
         end
       end
@@ -4173,8 +4134,8 @@ function factory() return function()
       PP1_STATE = nil
       PP1 = nil
 
-      reran_wizard = false -- Adding this here just to ensure it doesn't give me any Wizard-related popup...
-
+      skip_wizard = true -- Adding this here to skip the Wizard section in its entirety if Manselect was used...
+                         -- If the user wants to use it again, they can always run it via Option 4 (-see below).
       goto restart_prepaste
     end
 
