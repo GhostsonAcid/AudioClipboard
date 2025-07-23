@@ -22,6 +22,7 @@ AudioClipboard _(AudioClipboard.lua)_ is a Lua script designed to be run in the 
 - File-collisions and accidental erasures are prevented behind the scenes via simple file-name checks.
 - Legacy Dual-Mono stereo pairs (with -L/-R endings) are automatically modernized during pre-paste by renaming them with standard (%L/%R) endings.
 - Legacy fade shapes inherited from older versions of Ardour (like v2, etc.) are automatically detected and replaced during pasting with their closest modern equivalents. (-And the user is informed about this.)
+- Automatically saves your session before any step is executed so that if something goes wrong and Ardour crashes (which is very unlikely), then no previous work is lost.
 - Under the GNU General Public License (GPL), thus: 100% free to use, copy, alter, distribute, etc.!
 
 ### Known Limitations/Warnings
