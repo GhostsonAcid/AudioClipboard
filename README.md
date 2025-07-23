@@ -78,13 +78,13 @@ Simply download the [AudioClipboard.lua](https://github.com/GhostsonAcid/AudioCl
 > [!NOTE]
 > Before using AudioClipboard for any considerable work, it is strongly recommended to duplicate the Ardour application itself (and rename it/them if necessary) so you can have two projects open at the same time.  Without doing this, you would have to close and open entire projects with each copy and paste action, which is obviously silly. _(-If you are using Windows, however, duplicating Ardour might be [difficult or downright impossible.](https://discourse.ardour.org/t/using-multiple-copies-of-ardour-simultaneously/112031/3?u=ghostsonacid)  As of now, this is untested by me.)_
 
-### Step 1 - Copy Regions
+### _Step 1 - Copy Regions_
 
 Select mono and/or stereo audio regions that you would like to copy, and then use the "Copy Regions" function.
 
 ![Step 1; Select Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Basic_Use_Step_1_1_Select_Regions.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/Arrow_1.png) ![Step 1; Copy Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Basic_Use_Step_1_2_Copy_Regions.gif)
 
-### Step 2 - Pre-Paste Files
+### _Step 2 - Pre-Paste Files_
 
 In the project session/snapshot you would like to paste into, select an audio track and use the "Pre-Paste Files" function.  This step ensures that all of the necessary audio source files are embedded or imported into the current session as required.
 
@@ -93,13 +93,49 @@ In the project session/snapshot you would like to paste into, select an audio tr
 > [!TIP]
 > Always use "View File List" before proceeding to ensure proper file usage, and consider using the _"Manually Select Files to Use"_ feature to redirect pasted regions to different/better sources (-see additional info below).
 
-### Step 3 - Paste Regions
+### _Step 3 - Paste Regions_
 
 With that same (or whichever) audio track selected, use the "Paste Regions" function. _→ Click OK and watch your regions appear!_
 
 ![Step 3; Select Track](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Basic_Use_Step_3_1_Paste_Regions.gif) ![Arrow](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/Arrow_1.png) ![Step 3; Paste Regions](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Basic_Use_Step_3_2_CONGLATURATION.gif)
 
 ***~Done!***
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+## AudioClipboard Examples (and Accuracy)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Much care was put into making AudioClipboard paste with the utmost accuracy. After all, what good is a 'copy and paste' tool if the end-product is not what you had before?  That's the whole point.  Thus, the following data points about each region are stored and applied to the pasted regions accordingly:
+
+- File Start (-The starting sample 'position' relative to the whole source file.)
+- Position (-The actual starting sample position on the timeline.)
+- Length
+- Gain
+- Polarity
+- Envelope Automation
+- Envelope State (enabled or disabled)
+- All Fade-in/out Lengths
+- All Fade-in/out Shapes
+- All Fade-in/out States (enabled or disabled)
+- Mute State (muted or unmuted)
+- Opaque State (opaque or 'transparent')
+- Lock State (locked or unlocked)
+- Sync Position
+- Fade Before Fx (on or off)
+- Compound State (-Whether the region is a combined one or not; these are handled dramatically differently, but still as accurately as possible.)
+- Region Layering _([→ See Example 2 below...](#example-2))_
+
+### Example 1/2
+
+Here is an example of AudioClipboard's pasting accuracy in action (→ with arrows highlighting all of the identical features):
+
+![AudioClipboard Copy Paste Accuracy Example 1](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Copy_Paste_Accuracy_Example_1.png)
+
+### Example 2/2
+
+AudioClipboard even handles complicated (and nonsensical) region layering without any issue:
+
+![AudioClipboard Copy Paste Accuracy Example 2](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Copy_Paste_Accuracy_Example_2.png)
 
 -----------------------------------------------------------------------------------------------------------------------------
 
