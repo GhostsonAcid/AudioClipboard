@@ -181,11 +181,13 @@ As an extension of what manual file selection can do, you can also fix broken/mi
 
 -----------------------------------------------------------------------------------------------------------------------------
 
-## How This Script Works
+## Technical Information
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In short, Audio Clipboard works by externally logging all relevant and available data for the copied regions into a file called "AudioClipboard.tsv" in a temporary folder offered by your computer.  Then, during Pre-Paste, it scans for already-present, usable sources, creates a local 'Region ID Cache' (-another, more permanent .tsv file located in your project's `interchange/` directory), and ultimately imports/embeds the remaining sources needed for successful pasting.  And finally, during Pasting, it then clones new audio regions into existence via IDs provided by the local cache, and utilizes the data in AudioClipboard.tsv to recreate the copied regions, with original region size, trim, position, gain, envelope, fade lengths, and other states all being preserved in the process.
+### How This Script Works
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For further deatil, I've included hundreds of --muted notes all throughout the script itself, describing each step of the process in oftentimes considerable detail.  Although I now have something like 100-150 pages of hand-writen notes and typed-up documents describing the logic, flow, and structure of various parts of AudioClipboard, I decided it was best to simply incorporate notes and descriptions directly into the script itself (as is common), -for myself down the road, as well as any others who are interested (or those looking to address a bug or two).
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In a nutshell, Audio Clipboard works by externally logging all relevant and available data for the copied regions into a file called "AudioClipboard.tsv" in a temporary folder offered by your computer.  Then, during Pre-Paste, it scans for already-present, usable sources, creates a local 'Region ID Cache' (-another, more permanent .tsv file located in your project's `interchange/` directory), and ultimately 'imports'/embeds the remaining sources needed for successful pasting.  And finally, during Pasting, it then clones new audio regions into existence via IDs provided by the local cache, and then utilizes the data in AudioClipboard.tsv to apply all of the saved, original traits to the clones to recreate the copied regions accordingly.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For further detail, I've included hundreds of --muted notes all throughout the script itself, describing each step of the process in oftentimes considerable detail.  Although I now have something like 100-150 pages of hand-writen notes and typed-up documents describing the logic, flow, and structure of various parts of AudioClipboard, I decided it was best to simply incorporate notes and descriptions directly into the script itself (as is common), for myself down the road, as well as any others who might be interested (or those looking to address a bug or two).
 
 ### The Pre-Paste Process
 
@@ -197,6 +199,25 @@ Here is a diagram depicting the flow of this Pre-Paste 'decision-making' process
 
 > [!NOTE]
 > As a technical side-note, you might notice in the picture above that I never actually use do_import (-Ardour's import command-) ever once.  Instead, I have opted for more control by directly duplicating source files into `audiofiles/` of the destination session, and then using do_embed upon them.  This essentially mimics the do_import action, yet affords AudioClipboard precise naming control so that, for example, legacy dual-mono pairs that use -L/-R endings instead of the modern %L/%R can be upgraded appropriately in the process, thus _Guitar_take14-L.wav_ is renamed to → _Guitar_take14%L.wav_ (-if and only if it's actually a part of a dual-mono pair, of course).
+
+## Requests
+
+To streamline and improve the reliability of AudioClipboard in general, it would be nice for the developers of Ardour to implement/expose the following Lua bindings:
+
+### Fade-related bindings:
+- get_fade_in_length
+- get_fade_out_length
+- get_fade_in_shape
+- get_fade_out_shape
+
+> [!NOTE]
+> Acquiring and passing fade _lengths_ to Lua should be relatively easy.  But when it comes to _shapes,_ I have encountered many projects where fade shapes currently in use are NOT one of the five standard shapes (i.e. FadeLinear, FadeFast, etc.)!  This is fascinating to me, but perhaps one of the reasons why 'get_fade_in/out_shape' bindings have yet to be exposed?
+
+### A binding to enable/disable _"Move relevant automation when audio regions are moved"._
+
+
+
+
 
 -----------------------------------------------------------------------------------------------------------------------------
 
