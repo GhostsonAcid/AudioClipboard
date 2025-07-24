@@ -5333,7 +5333,7 @@ function factory() return function()
     -- A table for collecting missing source paths:
     local missing_sources = {}
 
-    -- Check if any IDs in TSV2 cannot actually be restored:
+    -- Check if any IDs in TSV2 cannot actually be restored by "RegionFactory":
     for _, entry in ipairs(clipboard) do
       local key = string.format("%s|%s|%s|%s",
         entry.used_channel_count,
@@ -5356,11 +5356,11 @@ function factory() return function()
       end
 
       if not found_valid then
-        table.insert(missing_sources, entry.source_path) -- Insert any missing/invalid sources into missing_sources.
+        table.insert(missing_sources, entry.final_source_path) -- Insert any missing/invalid sources into missing_sources.
       end
     end
 
-    -- If any are missing, then clear the IDs and warn the user:
+    -- If any are missing, then clear the respective IDs and warn the user:
     if #missing_sources > 0 then
 
       -- Establish a table to update the TSV2 lines accordingly:
@@ -5374,14 +5374,14 @@ function factory() return function()
           local fields = {}
           for field in line:gmatch("([^\t]*)\t?") do table.insert(fields, field) end
 
-          local path = normalize_path(fields[8]) --------------
+          local path = normalize_path(fields[8])
           for _, missing_path in ipairs(missing_sources) do
             if path == missing_path then
-              fields[14] = "Undetermined" -- wipe IDs only
+              fields[14] = "Undetermined" -- Wipe the IDs field only.
               break
             end
           end
-          table.insert(updated_lines, table.concat(fields, "\t"))
+          table.insert(updated_lines, table.concat(fields, "\t")) -- Add the line (-updated or not-) to updated_lines.
         end
       end
 
@@ -5390,7 +5390,7 @@ function factory() return function()
       tsv2_file_write:write(table.concat(updated_lines, "\n"))
       tsv2_file_write:close()
 
-      -- Build and show a warning message: --------------
+      -- Build and show a warning message:
       local msg = "         The following source file(s) could not be restored:\n\n"
 
       -- Build unique list of missing paths:
@@ -5405,13 +5405,13 @@ function factory() return function()
 
       -- Show each unique missing path:
       for _, path in ipairs(unique_paths) do
-        msg = msg .. "• " .. path .. "\n"
+        msg = msg .. "• " .. path .. "\n\n"
       end
 
       msg = msg ..
-        "\n\nMissing sources may have been deleted, renamed, or moved.\n\n" .. --------------
-        "             The stale region IDs have now been cleared.\n\n" ..
-        "                 Please re-run Pre-Paste for these files\n" ..
+        "\n\nMissing sources may have been deleted, renamed, or moved.\n\n" ..
+        "             The stale region IDs have now been cleared.\n\n" .. -- ...
+        "                 Please re-run Pre-Paste for these files\n" .. -- Trying to center the text here.
         "                       to regenerate usable region IDs."
 
       LuaDialog.Message("Missing Sources!", msg, LuaDialog.MessageType.Warning, LuaDialog.ButtonType.Close):run()
@@ -5504,7 +5504,7 @@ function factory() return function()
 
     debug_print("-------------- Paste STEP 4: Define Any Remaining Fuctions --------------")
 
-    -- A function to combine siblings of a group into their parent (compound) region:
+    -- A function to combine siblings of a group into their parent (compound/combined) region:
     function combine_siblings(playlist, track, layer_id, siblings_by_layer)
       -- Lookup sibling group for the current layer:
       local group = siblings_by_layer[layer_id]
@@ -5592,52 +5592,8 @@ function factory() return function()
         if id_iter then
           for _, id in ipairs(id_map[key]) do
             local r = ARDOUR.RegionFactory.region_by_id(PBD.ID(id))
-            if r and not r:isnil() then base = r break end
+            if r and not r:isnil() then base = r break end -- We only need one ID to work, so once we've got it just break out of the loop right then.
           end      
-        end
-        
-        -- If the user had erased a source and the IDs are ACTUALLY invalid, this still handles it: --------------
-        if not base then
-          -- Show failure dialog:
-          LuaDialog.Message(
-            "Paste Failed!",
-            "One or more saved regions could not be restored.\n\n" ..
-            "This may be due to deleted sources or expired IDs.\n\n" ..
-            "Please re-run Pre-Paste in this project to regenerate valid region IDs.",
-            LuaDialog.MessageType.Warning,
-            LuaDialog.ButtonType.Close
-          ):run()
-        
-          -- Now wipe the stale ID(s) from the TSV2 entry...
-          -- Establish a table for this:
-          local updated_lines = {}
-
-          for line in io.lines(tsv2_path) do
-            if line:match("^local_session") or line:match("^%s*$") then
-              -- Preserve the header and blank lines:
-              table.insert(updated_lines, line)
-            else
-
-              local fields = {}
-              for field in line:gmatch("([^\t]*)\t?") do table.insert(fields, field) end
-
-              if normalize_path(fields[8]) == normalize_path(entry.original_source_path) and
-                normalize_path(fields[12]) == normalize_path(entry.final_source_path)
-              then
-                fields[14] = "Undetermined" -- Wipe just the ID field.
-              end
-              table.insert(updated_lines, table.concat(fields, "\t"))
-            end
-          end
-        
-          -- Write updated_lines back to TSV2:
-          local tsv2_file_write = io.open(tsv2_path, "w")
-          if tsv2_file_write then
-            tsv2_file_write:write(table.concat(updated_lines, "\n"))
-            tsv2_file_write:close()
-          end
-        
-          return -- Abort the whole paste right here.
         end
 
         -- Clone a region into existence via RegionFactory:
