@@ -9,7 +9,7 @@ AudioClipboard _(AudioClipboard.lua)_ is a Lua script designed to be run in the 
 ### Features
 
 - Works with audio regions, mono and stereo.
-- Easy to use, 3-step process: [***Copy → Pre-Paste → Paste***](#how-to-use-audioclipboard)
+- Easy to use, 3-step process: [***Copy → Pre-Paste → Paste***](#how-to-use-audioclipboard) ✅
 - Pasted regions retain all original position, trim, envelope, gain, polarity, fade length/shape data, etc..
 - Avoids most re-embedding or re-importing of files already present in the project during Pasting.
 - By default, original relationships to source materials are preserved almost 1:1, but there's also...
