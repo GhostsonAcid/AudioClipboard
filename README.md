@@ -240,7 +240,7 @@ To streamline and improve the reliability of AudioClipboard in general, it would
 
 ### Testing
 
-AudioClipboard has been tested thoroughly on macOS Mojave running multiple copies of Ardour 8.12, as well as a VM of Ubuntu Studio.  If for some reason it doesn't work on your particular OS, please let me know.
+AudioClipboard was written using VSCodium (1.67.0) and has been tested thoroughly on macOS Mojave (10.14.6) running multiple copies of Ardour 8.12, as well as a VM of Ubuntu Studio (24.04.2 LTS).  There is no guarantee that it will work on any earlier version of Ardour, but you are welcome to try!  If for some reason it doesn't work on your particular OS though, then please let me know.
 
 > [!IMPORTANT]
 > If you experience any bugs with this script, please submit an "Issue" here on GitHub, or post about it/them on [the Ardour forum](discourse.ardour.org) and link [@GhostsonAcid](https://discourse.ardour.org/u/ghostsonacid/summary) in your comment, and I will try to address it.
@@ -260,8 +260,8 @@ I hope this script can help you work on whatever it is you're working on.
 
 --------------------------------------------------
 
-_Remember: **It all goes back to music...**_\
-Now if you'll excuse me, I've got to (try to) get back to editing/mixing my album...
+Remember: ***It all goes back to music...***\
+So if you'll excuse me, I've gotta _try_ to get back to editing/mixing my album...
 
 _~Enjoy!_
 
