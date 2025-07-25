@@ -3,10 +3,10 @@ ardour {
   name = "AudioClipboard",
   license = "GPL",
   author = "Joseph K. Lookinland",
-  description = [[       This script lets you 'copy and paste' selected mono and
+  description = [[       This script lets you copy and paste selected mono and
   stereo audio regions between project sessions/snapshots,
   with almost all original region data being preserved in the
-  process. (v1.0; Released 2025-07-25)]]
+  process. (v1.0) (2025-07-25)]]
 }
 
 -- Draw a custom clipboard icon:
@@ -104,11 +104,14 @@ function factory() return function()
      this point it appears to only be a problem when pasting *combined/compound/parent regions*, probably(?) because they are combined and in that process
      are immediately added to the track's playlist, but then trimming/positioning still has to occur (-thus moving any automation with it/them).)
 
-  8. People on the forum have been wanting to copy and paste audio regions between sessions/snapshots basically since Ardour's inception.  So, hopefully
+  8. Getting a binding for and/or figuring-out how to implement *transient marker data* copying and pasting...
+
+  9. People on the forum have been wanting to copy and paste audio regions between sessions/snapshots basically since Ardour's inception.  So, hopefully
      one day the devs of Ardour will finally implement some functionality like that *directly into Ardour itself*, and thus make this script obsolete.
      But, given their reaction to the idea over the years, it appears that this may never happen... (In my opinion, they should at least implement a
      selectable option to export audio regions with ALL original envelope, fade, gain, etc., data somehow attached to it.  Then you could simply export
-     regions like that and re-import them into your 'Session B', resulting in a similar outcome to what AudioClipboard now does.)
+     regions like that and re-import them into your 'Session B', resulting in a similar outcome to what AudioClipboard now does. (-Although I guess you'd
+     have to export each region one at a time though, which would be lame...))
      
      However, given all the things I've learned along the way whilst developing AudioClipboard, such as the complications with importing/embedding
      sources into 'Session B' and how one might choose when to import vs embed, etc., I can't really blame the devs for not wanting to implement
@@ -4556,7 +4559,7 @@ function factory() return function()
 
           if pp1_entry_ucc == 2 then
 
-            local ok, err = pcall(function()
+            local ok1, err1 = pcall(function()
               debug_print("IO1: Stereo DualMono IAF. Performing copy+merge for:", L_path)
 
               local before_ids = snapshot_ids(playlist) -- Take a 'snapshot' of the current IDs seen.
@@ -4589,7 +4592,7 @@ function factory() return function()
 
               table.insert(region_ids_to_remove, id) -- Save this region's ID to remove it later.
             end)
-            if not ok then debug_print("IO1 failed (ucc=2):", err) end
+            if not ok1 then debug_print("IO1 failed (ucc=2):", err1) end
 
           elseif pp1_entry_ucc == 1 then
 
@@ -4674,7 +4677,7 @@ function factory() return function()
             if restart then goto restart end
 
             -- Now, manifest our needed mono (-L/-R) variants:
-            local ok_sep, err_sep = pcall(function()
+            local ok_sep1, err_sep1 = pcall(function()
 
               local ar = region:to_audioregion()
               if not ar or ar:isnil() then error("IO1: Cannot convert to AudioRegion") end
@@ -4706,7 +4709,7 @@ function factory() return function()
               end
 
             end)
-            if not ok_sep then debug_print("IO1 stereo_confirmed: split failed:", err_sep) end
+            if not ok_sep1 then debug_print("IO1 stereo_confirmed: split failed:", err_sep1) end
 
           end -- The ucc condition block ends.
 
@@ -4720,7 +4723,7 @@ function factory() return function()
 
           if pp1_entry_ucc == 2 then -- This is the simpler case: confirmed stereo -> copy the file then use do_embed.
 
-            local ok, err = pcall(function()
+            local ok2, err2 = pcall(function()
               local new_path = make_nonconflicting_path(entry.final_source_path, sb_audio_dir, "") -- Generate a new, non-conflicting path.
               if not new_path then
                 debug_print("IO2: make_nonconflicting_path() returned nil")
@@ -4753,7 +4756,7 @@ function factory() return function()
 
               table.insert(region_ids_to_remove, id)
             end)
-            if not ok then debug_print("IO2 (ucc=2) failed:", err) end
+            if not ok2 then debug_print("IO2 (ucc=2) failed:", err2) end
 
           elseif pp1_entry_ucc == 1 then -- Just a TAD bit more complicated...
 
@@ -4879,7 +4882,7 @@ function factory() return function()
             if stereo_confirmed then
 
               -- Generate mono variants from the embedded stereo region itself:
-              local ok_sep, err_sep = pcall(function()
+              local ok_sep2, err_sep2 = pcall(function()
 
                 local ar = region:to_audioregion()
                 if not ar or ar:isnil() then error("IO2: Cannot convert to AudioRegion") end
@@ -4909,7 +4912,7 @@ function factory() return function()
                 end
 
               end)
-              if not ok_sep then debug_print("IO2 stereo_confirmed: split failed:", err_sep) end
+              if not ok_sep2 then debug_print("IO2 stereo_confirmed: split failed:", err_sep2) end
 
               -- Stereo is now confirmed, thus update the source types in the TSVs:
               update_source_type(pp1_entry_fsp, "Stereo")
@@ -4931,7 +4934,7 @@ function factory() return function()
 
           if pp1_entry_ucc == 2 then
 
-            local ok, err = pcall(function()
+            local ok3, err3 = pcall(function()
 
               local embed = C.StringVector()
               embed:push_back(pp1_entry_fsp)
@@ -4957,7 +4960,7 @@ function factory() return function()
             
               table.insert(region_ids_to_remove, id)
             end)
-            if not ok then debug_print("IO3 (ucc=2) failed:", err) end          
+            if not ok3 then debug_print("IO3 (ucc=2) failed:", err3) end          
 
           elseif pp1_entry_ucc == 1 then
 
@@ -5063,7 +5066,7 @@ function factory() return function()
             -- This is all the same as in IO2:
             if stereo_confirmed then
 
-              local ok_sep, err_sep = pcall(function()
+              local ok_sep3, err_sep3 = pcall(function()
 
                 local ar = region:to_audioregion()
                 if not ar or ar:isnil() then error("IO3: Cannot convert to AudioRegion") end
@@ -5091,7 +5094,7 @@ function factory() return function()
                 end
 
               end)
-              if not ok_sep then debug_print("IO3 stereo_confirmed: split failed:", err_sep) end
+              if not ok_sep3 then debug_print("IO3 stereo_confirmed: split failed:", err_sep3) end
 
               update_source_type(pp1_entry_fsp, "Stereo")
         
