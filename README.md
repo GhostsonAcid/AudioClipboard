@@ -41,9 +41,7 @@ AudioClipboard _(AudioClipboard.lua)_ is a Lua script designed to be run in the 
 
 ## Installation
 
-Simply download the [AudioClipboard.lua](https://github.com/GhostsonAcid/AudioClipboard/blob/main/AudioClipboard.lua) file here on GitHub, and then do the following based on your OS:
-
-![How To Download The AudioClipboard.lua File](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Download_Icon.png)
+Simply [click here to download AudioClipboard.lua (v1.0)](https://github.com/GhostsonAcid/AudioClipboard/releases/download/v1.0/AudioClipboard.lua), and then do the following based on your OS:
 
 ### GNU/Linux:
 
