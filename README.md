@@ -11,12 +11,12 @@ AudioClipboard _(AudioClipboard.lua)_ is a Lua script designed to be run in the 
 - Works with audio regions, mono and stereo.
 - Easy to use, 3-step process: [***Copy → Pre-Paste → Paste***](#how-to-use-audioclipboard) ✅
 - Pasted regions retain all original position, trim, envelope, gain, polarity, fade length/shape data, etc..
-- Avoids most re-embedding or re-importing of files already present in the project during Pasting.
+- Avoids most re-embedding or re-importing of files already present in the project during pre-pasting.
 - By default, original relationships to source materials are preserved almost 1:1, but there's also...
 - An option to manually select different files to use for pasting. (This is super convenient for cleaning-up projects in general, and even fixing broken sources (→ [see the examples below](#use-cases-and-other-features)).)
 - Handles -L/-R regions that came from a use of "Make Mono Regions".
 - Handles combined audio regions (-although Ardour currently suffers from [many combined region bugs](https://discourse.ardour.org/t/better-compound-region-handling/111930), which can occasionally cause various problems in attempts to copy them, despite my best efforts).
-- Can be used in conjunction with Ardour's built-in track-template-creator to achieve [full track and region duplication](#full-track--regions-duplication) from one session/snapshot into another.
+- Can be used in conjunction with Ardour's built-in track-template-creator to achieve [full track and regions duplication](#full-track--regions-duplication) from one session/snapshot into another.
 - There's a built-in 'Source Finder Wizard' that automatically discovers potential source matches (via similar naming) during Pre-Paste, and offers them for approval. (This feature further helps reduce redundant or unecessary imports/embeds.)
 - All contained in a single, standalone Lua script.
 - The Paste action is an undoable command (via ctrl-Z/cmd-Z, etc.).
@@ -262,7 +262,7 @@ I hope this script can help you work on whatever it is you're working on.
 --------------------------------------------------
 
 Remember: ***It all goes back to music...***\
-So if you'll excuse me, I've gotta _try_ to get back to editing/mixing my album...
+So if you'll excuse me, I've gotta try to get back to editing/mixing my album now...
 
 _~Enjoy!_
 
