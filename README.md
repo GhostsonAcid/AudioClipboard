@@ -32,6 +32,7 @@ AudioClipboard _(AudioClipboard.lua)_ is a Lua script designed to be run in the 
 - It doesn't (yet) work with audio regions/sources with more than 2 channels, sorry.
 - It doesn't work with anything MIDI, but this is okay because transferring MIDI regions is easy thanks to Ardour's built-in region export function _(-select the MIDI region, then click Region → Export...)._
 - It sometimes fails to properly handle combined/compound regions, mostly due to [known Ardour bugs](https://tracker.ardour.org/view.php?id=9947).
+- It can't recreate original _transient markers._ (-Hopefully this can be implemented soon.)
 
 > [!WARNING]
 > - Due to the way in which AudioClipboard pastes regions, this script has the potential to disturb/destroy **automation curves** (-plugin/fader/pan/etc.) on a track if the setting _"Move relevant automation when audio regions are moved" (-under Preferences → Editor)_ is NOT disabled during Pasting. **This is especially true for pasting combined regions.** ***→ So PLEASE be sure to DISABLE that setting BEFORE using AudioClipboard!***
@@ -128,7 +129,7 @@ With that same (or whichever) audio track selected, use the **"Paste Regions"** 
 - Region Layering _([→ See Example 2 below...](#example-22))_
 
 > [!NOTE]
-> The only data that AudioClipboard does NOT currently duplicate are _transient markers._  Hopefully soon this will be implemented.
+> Again, to my knowledge the only data that AudioClipboard does NOT currently recreate are _transient markers._
 
 ### Example 1/2
 
