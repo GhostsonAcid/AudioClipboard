@@ -3794,14 +3794,10 @@ function factory() return function()
         { type = "label", title = " " }, -- Spacer
         { type = "heading", title = "⚠ Any manual changes you apply now will:" },
         { type = "label", title = " " }, -- Spacer
-        { type = "label", title = "• Persist indefinitely unless changed again." },
+        { type = "label", title = "• Persist indefinitely unless changed again (or the local ID cache is erased)." },
         { type = "label", title = "• Only affect current and future pastes/regions, not previous ones." },
         { type = "label", title = "• Apply to all pasted regions that once shared the same, original source." },
-        { type = "label", title = "• Only impact this current project (unless pre-pasting immediately into another project)." },
-        { type = "label", title = " " }, -- Spacer
-        { type = "label", title = "If proceeding, please choose sensible replacements." },
-        { type = "label", title = "(-E.G., if the original source was stereo-in-nature," },
-        { type = "label", title = "then DON'T pick a mono file as a replacement.)" },
+        { type = "label", title = "• Only impact this current snapshot (unless pre-pasting immediately into another one)." },
         { type = "label", title = " " }, -- Spacer
         {type = "dropdown",
           key = "mode",
@@ -3861,7 +3857,6 @@ function factory() return function()
 
           if selected_path ~= final_path or handling_mode ~= "normal" then -- We then need to gather info about the (likely) new path...
                                                                            -- Even if all that was changed was forcing an import or embed.
-
             -- Establish the ucc and uct from the current input entry:
             local used_channel_count = tonumber(entry.used_channel_count)
             local used_channel_type = tonumber(entry.used_channel_type)
@@ -3907,12 +3902,20 @@ function factory() return function()
 
             if handling_mode == "force_embed" then -- This overrides normal file-handling to simply attempt an embedding of the chosen file.
               final_io_code = 3
-              debug_print("Manselect embed enforced. -> Forcing IO3.")
+              debug_print("Manselect embed enforced -> Forcing to IO3.")
             end
 
             if handling_mode == "force_import" then -- Override to enforce importing...
               final_io_code = 2
-              debug_print("Manselect import enforced. -> Forcing IO2.")
+              debug_print("Manselect import enforced -> Forcing to IO2.")
+            end
+
+            -- Additional IO-correction for when the file you've chosen is *already IAF of the project you're pasting into*:
+            local session_name = Session:name() -- The current session's name, normalized (-because selected_path was normalized).
+            local IAF_match = "/interchange/" .. session_name .. "/audiofiles/"
+            if selected_path:find(IAF_match, 1, true) and final_source_location == "IAF" then -- Only applies to IAF sources.
+              final_io_code = 3 -- Treat like a NIAF file so it won't be needlessly duplicated IAF of this project.
+              debug_print("Manselect IAF source is already present IAF of this project -> Forcing to IO3 (to prevent duplicating the source).")
             end
 
             -- Determine local_source_path:
