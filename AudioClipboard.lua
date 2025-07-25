@@ -111,7 +111,7 @@ function factory() return function()
      regions like that and re-import them into your 'Session B', resulting in a similar outcome to what AudioClipboard now does.)
      
      However, given all the things I've learned along the way whilst developing AudioClipboard, such as the complications with importing/embedding
-     sources into 'Session B' and how one might choose to handle importing vs embedding, etc., I can't really blame the devs for not wanting to implement
+     sources into 'Session B' and how one might choose when to import vs embed, etc., I can't really blame the devs for not wanting to implement
      copying and pasting like this.  The obvious, easy route for them is to simply say 'just commit to the envelope or whatever and bounce the file'.
      But oftentimes that is simply an unjustifiable (or at least undesireable) path, -> hence AudioClipboard! :D
 
@@ -297,7 +297,7 @@ function factory() return function()
 
   -- Updated function to infer fade lengths AND shapes directly from the XML...
   -- By carefully analyzing various .ardour files, I arrived at those numbers (of 0.0's, 0.9's, etc.) associated with the various fade shapes:
-  local function analyze_fade_events(events, label) -- Feed this function the "events" (from the XML) you wish to have analyzed.
+  local function analyze_fade_events(events, label) -- Feed this function the "events" (i.e. sets of numbers/data-points) from the XML you wish to have analyzed.
 
     -- Note that fades from older versions of Ardour (like A2) that were migrated into A8+ used DIFFERENT shapes, and thus different numbers/etc...
     -- But, ones that cannot readily/easily be recreated unless a catalog of purely original data points were to be saved into TSV1...
@@ -324,7 +324,7 @@ function factory() return function()
     local units_per_sample = 282240000 / sr ---------------------------------------------------------
     local fade_length = last_pos and math.floor(last_pos / units_per_sample + 0.5) or 64 -- Fallback to the minimum standard of 64 samples if something went wrong...
 
-    -- Fade-shape determination/inferring begins (-this logic was actually pretty fun to setup)...
+    -- Fade-shape determination/inferring begins (-this logic was actually pretty fun to setup):
     local shape = "Undetermined" -- Initial placeholder.
     local count = #values
 
@@ -339,7 +339,7 @@ function factory() return function()
       is_legacy = true
 
       local nines = 0
-      for _, val in ipairs(values) do
+      for _, val in ipairs(values) do -- Loop through the "values" set.
         if val and tostring(val):sub(1, 3) == "0.9" then -- Check for instances of exactly "0.9".
           nines = nines + 1 -- Add any if present in any latter values.
         end
@@ -362,15 +362,15 @@ function factory() return function()
     elseif count >= 30 then -- Even though FadeSlow and FadeFast had 32 each, and FadeConstantPower had 33, I decided to lump them ALL together for additional logic...
       local zeros = 0
       for _, val in ipairs(values) do
-        if val and tostring(val):sub(1, 3) == "0.0" then
+        if val and tostring(val):sub(1, 3) == "0.0" then -- Check for instances of exactly "0.0".
           zeros = zeros + 1
         end
       end
       -- The consistent instances of exactly "0.0" (i.e. not incl. ones like "1.0000000116860974e-07") were actually 20, 15, and 1-2, respectively...
       -- but I'm making the counting a bit more flexible to be safe(r):
-      if zeros >= 19 then 
+      if zeros >= 19 then
         shape = "FadeFast"
-      elseif zeros >= 14 then 
+      elseif zeros >= 14 then
         shape = "FadeSlow"
       elseif zeros <= 5 then -- Again, being generous here; I've seen examples with x2 0.0's.
         shape = "FadeConstantPower" -- Ardour's 'standard', default fade shape, by the way.
@@ -454,14 +454,13 @@ function factory() return function()
       "a file called \"AudioClipboard.tsv\" in a temporary folder offered by your computer.  Then, during Pre-Paste, it scans for " ..
       "already-present, usable sources, creates a local Region ID Cache (-another, more permanent .tsv file), and ultimately imports" ..
       "/embeds the remaining sources needed for successful pasting.  And finally, during Pasting, it then clones new audio regions " ..
-      "into existence via IDs provided by the local cache, and utilizes the data in AudioClipboard.tsv to recreate the copied regions, " ..
-      "with original region size, trim, position, gain, envelope, fade lengths, and other states all being preserved in the process.\n\n" ..
+      "into existence via IDs provided by the local cache, and utilizes the data in AudioClipboard.tsv to apply all of the saved, " ..
+      "original traits to the clones to recreate the copied regions accordingly.\n\n" ..
       "                                    Other Notes:\n\n" ..
       "         This script can be used in conjunction with Ardour's built-in track-template-creator (-right-click on an audio mixer " ..
       "strip's name, then use \"Save As Template...\") to achieve full track and region duplication from one session/snapshot into another.\n\n" ..
-      "         Also, if you experience any bugs with this script, please submit an \"Issue\" on the GitHub page for AudioClipboard, " ..
-      "and/or post about it/them on the Ardour forum (discourse.ardour.org) and link @GhostsonAcid in your comment, and I will try to " ..
-      "address it. ~Thank you and enjoy!"
+      "         Also, if you experience any bugs with this script, please submit an \"Issue\" on the GitHub page for AudioClipboard, and/or " ..
+      "post about it on the Ardour forum and link @GhostsonAcid in your comment, and I will try to address it. ~Thank you and enjoy!"
 
     LuaDialog.Message("Etc. (2 of 2)", part2, LuaDialog.MessageType.Info, LuaDialog.ButtonType.Close):run()
     goto show_main_dialog
@@ -475,7 +474,7 @@ function factory() return function()
 
   if action == "copy" then
 
-    -- Save the session; precautionary; just in case something goes wrong and Ardour crashes somehow (which seems very, very, very unlikely here)):
+    -- Save the session; precautionary; just in case something goes wrong and Ardour crashes somehow (-which seems very, very, very unlikely here):
     Session:save_state("", false, false, false, false, false)
 
     local sel = Editor:get_selection()
@@ -636,7 +635,7 @@ function factory() return function()
         { type = "label", title = "In order to copy these regions, this script must temporarily" },
         { type = "label", title = "uncombine duplicates of them to view their contents." },
         { type = "label", title = " " }, -- Spacer
-        { type = "heading", title = "⚠ Important Notes:" }, -- Spacer
+        { type = "heading", title = "⚠ Important Notes:" },
         { type = "label", title = " " }, -- Spacer
         { type = "label", title = "As of Ardour 8.12, manually uncombining audio regions suffers" },
         { type = "label", title = "several bugs/inadequacies.  It is therefore highly recommended" },
@@ -711,18 +710,16 @@ function factory() return function()
       end
 
       -- 4. used_channel_type (-Either 0, 1, or 2, for Mono/Left/Undetermined, Right, or Stereo, respectively.)
-      local used_channel_type = 0  -- Default to Mono/Left/Undetermined
+      local used_channel_type = 0  -- Default to Mono/Left/Undetermined.
 
-      if is_compound then
-        -- COMPOUND REGIONS:
+      if is_compound then -- COMPOUND REGIONS:
         if used_channel_count == 2 then
-          used_channel_type = 2  -- Stereo (UCT 2)
+          used_channel_type = 2
         else
           used_channel_type = 0  -- In this case representing "Unknown" or "Irrelevant"...
         end
 
-      else
-        -- "NORMAL" REGIONS:
+      else -- "NORMAL" REGIONS:
         if used_channel_count == 2 then
           used_channel_type = 2
         elseif used_channel_count == 1 then
@@ -752,14 +749,13 @@ function factory() return function()
       if not is_compound then
 
         -- 5. original_source_location (IAF, TREE, or NIAF)
-        -- Normalize source path
-        local norm_path = normalize_path(path)
+        local norm_path = normalize_path(path) -- Normalize the source path.
 
         if norm_path:match("/interchange/[^/]+/audiofiles/") then -- Looks for just a single directory between the two.
           original_source_location = "IAF" -- = In audiofiles/ (of this or any project); -Will bring these into AF of the session you Pre-Paste/Paste into.
 
         elseif norm_path:find(normalize_path(Session:path()), 1, true) then
-          original_source_location = "TREE" -- = In this project's file-tree, but NIAF; -Great for catching files in exports/ and handling them more like IAF files later on.
+          original_source_location = "TREE" -- = In this project's file-tree, but NIAF; -Great for catching files in exports/ and handling them like IAF files later on.
 
         else
           original_source_location = "NIAF" -- = Not in any audiofiles/ folder, or Session A's project folder/subfolders.
@@ -771,8 +767,8 @@ function factory() return function()
         if used_channel_count == 2 then
           original_source_type = "Stereo" -- Will mutate to "DualMono" in a moment if that is what is detected...
         elseif used_channel_count == 1 then
-          if used_channel_type == 1 then
-            original_source_type = "Stereo" -- Same as ^...
+          if used_channel_type == 1 then -- 1 = Right-side audio (-implies Stereo-in-nature audio).
+            original_source_type = "Stereo" -- Again, will mutate to "DualMono" in a moment if that is what is detected...
           end
         end
 
@@ -782,7 +778,7 @@ function factory() return function()
         -- DualMono Logic Tag
         local is_dm, lr_type, other_path, _ = detect_dualmono_pair(path)
 
-        if original_source_location == "IAF" then
+        if original_source_location == "IAF" then -- Only concerned about DM presence if the source is IAF.
 
           if is_dm then -- If 'is DualMono' returns true, then...
             original_source_type = "DualMono" -- Mutate the type to "DualMono" accordingly.
@@ -812,7 +808,7 @@ function factory() return function()
         final_io_code = original_io_code
         final_source_path = original_source_path -- fsp = osp
 
-      else
+      else -- For compound regions:
         original_source_location = "Irrelevant"
         original_source_type = "Irrelevant"
         original_io_code = 0 -- Signifies "Irrelevant"...
@@ -829,31 +825,36 @@ function factory() return function()
       local length_spl   = r:length():samples()
 
       -- 16. gain_and_polarity
-      -- NOTE: Negative values indicate that Polarity has been 'flipped'(!):
+      -- NOTE: *Negative* values indicate that Polarity has been 'flipped'(!):
       local gain_and_polarity = ar:scale_amplitude() or 1.0 -- 1.0 is a fallback...
 
       -- 17. envelope
       local envelope = "Undetermined"
-      if not is_child_region then -- Child regions need separate handling later...
+      if not is_child_region then -- Child regions need separate handling later.
         local env = ar:envelope()
         if env and not env:isnil() then
-          local parts = {}
+          local parts = {} -- A table to store envelope data-points.
           for ev in env:events():iter() do
             table.insert(parts, string.format("%d:%.6f", ev.when:samples(), ev.value))
           end
-          envelope = table.concat(parts, ",")
+          envelope = table.concat(parts, ",") -- String-together the envelope data-points gathered.
         end
       end
 
-      -- 18. envelope_state (Active or Inactive)
+      -- 18. envelope_state (EnvelopeActive or EnvelopeInactive)
       local envelope_state = ar:envelope_active() and "EnvelopeActive" or "EnvelopeInactive"
 
-      -- 19-26. Fade information, with length and shape taken directly from the current XML; -kinda hacky but works...
+      -- 19-20. fade_in_spl, fade_out_spl (in samples)
+      -- 21-22. fade_in_shape, fade_out_shape (FadeLinear, FadeConstantPower, FadeSymmetric, FadeSlow, FadeFast, or Undetermined)
+      -- 23-24. fade_in_type, fade_out_type (Normal, Legacy, or Undetermined)
+      -- 25-26. fade_in_state, fade_out_state (FadeIn/OutActive or FadeIn/OutInactive)
+
+      -- Fade information, with length and shape taken directly from the current XML; -kinda hacky but works...
       -- Obviously this could be completely eliminated if get_fade_in_length, get_fade_in_shape, etc., were added the Lua bindings! o___o
-      -- Establish a function first:
+      -- Establish an XML-scanning function first:
       local function get_region_fades_from_xml(region_id)
 
-        --Establish path to the current XML:
+        -- Establish a path to the current XML:
         local session_path = Session:path()
         local snapshot_name = Session:snap_name()
         local xml_path = ARDOUR.LuaAPI.build_filename(session_path, snapshot_name .. ".ardour")
@@ -864,20 +865,20 @@ function factory() return function()
         local xml = f:read("*all")
         f:close()
 
+        -- Find (and establish a term for) the "<Playlists>" portion of the XML:
         local playlists = xml:match("<Playlists>(.-)</Playlists>")
-        if not playlists then return 64, 64, "Undetermined", "Undetermined", "Undetermined", "Undetermined" end
+        if not playlists then return 64, 64, "Undetermined", "Undetermined", "Undetermined", "Undetermined" end -- Again, fallback.
 
-        -- Safe scoped ID match
         local region_block = nil
-        for block in playlists:gmatch("<Region.->.-</Region>") do
-          local found_id = block:match('id="([^"]+)"')
-          if found_id == region_id then
-            region_block = block
-            break
+        for block in playlists:gmatch("<Region.->.-</Region>") do -- In the "<Playlists>" portion of the XML, look through "<Region" blocks...
+          local found_id = block:match('id="([^"]+)"') -- Look at the "id=" portion of each "<Region" block...
+          if found_id == region_id then -- If the found_id matches the region's ID (that we fed into this function), then...
+            region_block = block -- This is our block of interest.
+            break -- Immediately break out of the XML parsing.
           end
         end
 
-        if not region_block then return 64, 64, "Undetermined", "Undetermined", "Undetermined", "Undetermined" end -- Again, all are fallback...
+        if not region_block then return 64, 64, "Undetermined", "Undetermined", "Undetermined", "Undetermined" end
 
         -- Establish the fade-in and fade-out 'sub-blocks' in the XML we want to scrap data from:
         local fadein_block = region_block:match("<FadeIn>.-<events>(.-)</events>")
@@ -887,14 +888,16 @@ function factory() return function()
         local fade_in_spl, fade_in_shape, fade_in_is_legacy = analyze_fade_events(fadein_block, "FadeIn")
         local fade_out_spl, fade_out_shape, fade_out_is_legacy = analyze_fade_events(fadeout_block, "FadeOut")
 
-        return fade_in_spl, fade_out_spl, fade_in_shape, fade_out_shape, fade_in_is_legacy, fade_out_is_legacy
+        return fade_in_spl, fade_out_spl, fade_in_shape, fade_out_shape, fade_in_is_legacy, fade_out_is_legacy -- Return the found/determined values.
       end
 
-      -- Use the region's ID and the previous get_region_fades_from_xml function:
+      -- Establish the region's ID and the terms we need:
       local region_id = ar:to_stateful():id():to_s()
       local fade_in_spl, fade_out_spl, fade_in_shape, fade_out_shape, fade_in_type, fade_out_type, fade_in_state, fade_out_state
 
       if not is_child_region then -- Child regions need separate handling later...
+
+        -- Use the region's ID and the previous get_region_fades_from_xml function:
         fade_in_spl, fade_out_spl, fade_in_shape, fade_out_shape, fade_in_is_legacy, fade_out_is_legacy = get_region_fades_from_xml(region_id)
 
         fade_in_type = (fade_in_is_legacy == "Undetermined") and "Undetermined" or (fade_in_is_legacy and "Legacy" or "Normal")
@@ -936,7 +939,7 @@ function factory() return function()
       -- 33. original_id
       local original_id = r:to_stateful():id():to_s()
 
-      -- Returns all 33 'base info' fields separately:
+      -- Return all 33 'base info' fields separately:
       return
         origin_session, -- 1
         origin_snapshot, -- 2
@@ -981,7 +984,7 @@ function factory() return function()
 
     debug_print("-------------- Copy STEP 3: Initiate the Main Copy Loop --------------")
 
-    local parent_regions_layer_0 = {}  -- Ordered list of first/top-level compound region IDs, if present.
+    local parent_regions_layer_0 = {}  -- Ordered list of 'top-level' (layer 0) compound region IDs, if present.
 
     for _, id in ipairs(region_order) do
 
@@ -1031,7 +1034,7 @@ function factory() return function()
       local parent_id          = is_compound and r:to_stateful():id():to_s() or "Irrelevant"
 
       -- Strip everything after the final dot (including the dot itself), ONLY if it is_compound:
-      local original_parent_name = is_compound and original_name:match("(.+)%.[^%.]+$") or "Irrelevant" -- NEW.
+      local original_parent_name = is_compound and original_name:match("(.+)%.[^%.]+$") or "Irrelevant"
 
       local is_compound_child            = "NotChild" -- Obviously no "children" can exist at this 'topmost' compound_layer...
       local childs_parents_id            = "Irrelevant" -- Thus most of these, too, are irrelevant...
@@ -1041,7 +1044,7 @@ function factory() return function()
       local xml_pre_child_layering_index = "Irrelevant"
       local siblings_total               = "Irrelevant"
       local sibling_number               = "Irrelevant"
-      local compound_layer               = is_compound and "Layer0" or "Irrelevant" -- Just set all non-compound regions to "Irrelevant"...
+      local compound_layer               = is_compound and "Layer0" or "Irrelevant" -- Just set all non-compound regions to "Irrelevant".
 
       -- Insert parent_id into our parent_regions_layer_0 table, for duplicating and uncombining soon:
       if is_compound then
@@ -1124,6 +1127,7 @@ function factory() return function()
 
     debug_print("-------------- Copy STEP 4: Prepare for Additional Looping (for Any Compound/Combined/Parent-Regions) --------------")
 
+    -- Establish the needed slew of tables and terms (.....goddamn compound-region handling):
     local need_children_of_layer = {}
     local tsv1_entries_by_layer = {}
     local compound_processing = false
@@ -1134,7 +1138,7 @@ function factory() return function()
     -- Only populate "layer 0" if there *are* compound parents:
     if #parent_regions_layer_0 > 0 then
       need_children_of_layer[1] = parent_regions_layer_0
-      -- Also, set this to true to manifest a different popup later + region cleanup:
+      -- Also, now set this to true to manifest a different popup later + region cleanup:
       compound_processing = true
     end
 
@@ -1153,8 +1157,8 @@ function factory() return function()
       return tbl
     end
 
-    -- A massive function to process any compound/combined/parennt-regions and their 'children'... @_____@
-    -- Needless to say, this was a bitch to figure-out, haha:
+    -- A massive function to process any compound/combined/parent-regions and their 'children'... @_____@
+    -- Needless to say, this was a bitch to figure-out, haha -___- :
     function process_child_layer(child_layer, input_parents)
       -- Initialize layer tables:
       need_children_of_layer[child_layer + 1] = {}
@@ -1190,8 +1194,8 @@ function factory() return function()
         for id, r in pairs(region_table_after) do
           if not region_table_before[id] then
             parent_duplicate = r
-            table.insert(region_ids_to_remove, id)  -- Save this duplicate (ID) for cleanup later on.
-            break
+            table.insert(region_ids_to_remove, id) -- Save this duplicate parent's ID for cleanup later on...
+            break                                  -- (-Although it will be Uncombined (i.e. eliminated), so this is purely precautionary.)
           end
         end
 
@@ -1201,7 +1205,7 @@ function factory() return function()
 
         -- Expand the duplicate to its fullest possible extent but WITHOUT moving it (-although the latter is not crucial, I suppose):
         parent_duplicate:trim_front(Temporal.timepos_t(0))
-        parent_duplicate:trim_end(Temporal.timepos_t(1000000000000)) -- Attempt to add 1 Trillion samples... o_____o
+        parent_duplicate:trim_end(Temporal.timepos_t(1000000000000)) -- Attempt to add 1 Trillion samples... o_____o (-Works for expansion.)
 
         -- Snapshot before uncombing to get the 'children':
         local region_table_before = get_region_table(playlist)
@@ -1216,20 +1220,20 @@ function factory() return function()
         -- after ANY uncombine operation upon a DUPLICATE of the parent in order to get the actual fade length/shape/etc. info!
         -- This will NOT be necessary, of course, when and if the Ardour devs add get_fade_in_length/get_fade_out_length (and hopefully more) to the bindings:
         Session:save_state("", false, false, false, false, false)
-        debug_print("--> XML Saved!")
+        debug_print("--> XML Saved for duplicate, parent-region parsing!")
 
         -- Capture the children:
         local current_siblings = {}
         for id, r in pairs(region_table_after) do
           if not region_table_before[id] then
             table.insert(current_siblings, r)
-            table.insert(region_ids_to_remove, id)  -- Also save any child (via ID) for later cleanup.
+            table.insert(region_ids_to_remove, id)  -- Also save any child (via ID) for later cleanup. (-Saving *these* IDs is actually important.)
           end
         end
 
         -- Now detect any sibling manifestation failure...
         -- This was necessary after discovering that SOME parents can be uncombined to NO child regions whatsoever...
-        -- This is 100% a part of the host of bugs in Ardour with respect to compound regions/handling:
+        -- This is 100% a part of the host of bugs in Ardour with respect to its compound-region handling:
         if #current_siblings == 0 then
           siblings_manifested = false -- Mark as a failure to manifest the child/sibling group.
           debug_print("No children were manifested after uncombine! Broken compound region: " .. parent_region:name())
@@ -1240,45 +1244,49 @@ function factory() return function()
         -- The initial sort here of current_siblings is now by TIME ONLY...
         -- This is to bring it into full (presumed consistent) alignment with how child regions (in the "<Playlist"... block of the parent) are listed in the XML...
         -- For the XML examples I observed, the organization of children respected timing only...
-        -- But, I am still unsure as to what happens if two or more children share the SAME starting 'location' (-and will ignore that issue for the time being): --------------
+        -- But, I am still unsure as to what happens if two or more children share the SAME starting 'location' (-and will ignore that issue for the time being):
         table.sort(current_siblings, function(a, b)
           return a:position():samples() < b:position():samples()
         end)
 
-        -- Next, save this ordering solely for child_chron_order in TSV 1, which is more or less purely informative:
+        -- Next, save this ordering solely for child_chron_order in TSV 1, which is more-or-less purely informative:
         local chron_index_by_id = {}
         for i, r in ipairs(current_siblings) do
           local id = r:to_stateful():id():to_s()
           chron_index_by_id[id] = tostring(i)
         end
 
-        -- Etablish the total number of siblings/children that manifested from the uncombined parent:
+        -- Establish the total number of siblings/children that manifested from the uncombined parent:
         local current_siblings_total = #current_siblings
         debug_print("Number of current siblings:", #current_siblings)
 
-        -- A function just for children (obviously), to get data on the ORIGINAL (pre-)child regions so we can ACCURATELY recreate parents...
+        -- A function just for children (obviously), to get data on the ORIGINAL, *pre-child* regions so we can ACCURATELY recreate parents...
         -- I pray that the Ardour devs will one day fix child region recreation (via Uncombine), because developing all this was a fucking nightmare @_____@
         -- and it STILL fails on occasion:
         local function get_accurate_siblings_data(original_parent_name, current_siblings_total)
+
           local session_path = Session:path()
           local xml = io.open(ARDOUR.LuaAPI.build_filename(session_path, Session:snap_name() .. ".ardour")):read("*all")
           local regions = xml:match("<Regions>(.-)</Regions>")
+
           if not regions then
             debug_print("NO REGIONS LIST FOUND IN XML!")
-            return "Undetermined", 64, 64, "Undetermined", "Undetermined", "Undetermined", "Undetermined", "Undetermined"
+            return "Undetermined", 64, 64, "Undetermined", "Undetermined", "Undetermined", "Undetermined", "Undetermined", "Undetermined", "Undetermined", "Undetermined", "Undetermined"
           else
             debug_print("Regions List Found in XML!")
           end
 
-          -- A function to find the parent playlist section...
+          -- Another function to find the parent playlist section...
           -- We do this ONCE per sibling group so as to not repeat all the XML scanning per child:
           local function extract_parent_playlist_block(xml_path, original_parent_name)
+
             local f = io.open(xml_path, "r")
             if not f then
               debug_print("Could not open XML file at: " .. xml_path)
               return nil
             end
           
+            -- Various terms to guide the flow during parsing:
             local inside_region = false
             local inside_nested = false
             local inside_source = false
@@ -1289,54 +1297,57 @@ function factory() return function()
           
             debug_print("Looking for parent Region with name:", original_parent_name)
           
-            local playlist_captured = false
-
-            for line in f:lines() do
+            local playlist_captured = false -- Flipping this to true is our goal, as that would imply we successfully
+                                            -- honed-in on the (hopefully) correct "</Playlist>" block/area we need.
+            for line in f:lines() do -- Begin scanning each line in the XML...
               if playlist_captured then break end -- Stops the scanning process if the right child-region playlist has been found and saved.
-              -- I carefully examined many XML (.ardour) examples to arrive at the following flow:
+
+              -- You see, a parent's data will be contained within its own "<Region" block, but because it's a *parent*,
+              -- part of that data will be a *"<Playlist"* portion containing the child-region info we are looking for!
+
+              -- Thus, I carefully examined many XML (.ardour) examples to arrive at the following flow:
               if line:find('<Region name="' .. original_parent_name, 1, true) and not inside_playlist then
                 inside_region = true
                 region_matches = true
                 debug_print("Entered matching <Region> block.")
-              elseif inside_region and line:match("</Region>") and not inside_playlist then
+              elseif inside_region and line:match("</Region>") and not inside_playlist then -- This "<Region" block has come to a close, thus...
                 debug_print("Exited <Region> block.")
-                inside_region = false
-                region_matches = false
-                parent_playlist = {}
-              elseif inside_region and not inside_playlist then
-                if line:match("<NestedSource>") then
-                  inside_nested = true
+                inside_region = false -- Flip back to false.
+                region_matches = false -- And this, too.
+                parent_playlist = {} -- Reset/wipe the parent_playlist table.
+              elseif inside_region and not inside_playlist then -- Still in a "<Region" block (-it hasn't ended yet), and not yet inside_playlist...
+                if line:match("<NestedSource>") then -- Entering a "<NestedSource>" block, thus...
+                  inside_nested = true -- Flip to true.
                   debug_print("Entered <NestedSource>")
                 end
-                if line:match("</NestedSource>") then
-                  inside_nested = false
+                if line:match("</NestedSource>") then -- "<NestedSource>" closed, thus...
+                  inside_nested = false -- Flip back to false.
                   debug_print("Exited <NestedSource>")
                 end
-                if inside_nested and line:match("<Source") then ------------------------------------------------------------------------------------------
-                  inside_source = true
+                if inside_nested and line:match("<Source") then -- Entering a "<Source" block (-and MUST be inside_nested(!)), thus...
+                  inside_source = true -- Flip to true.
                   debug_print("Entered <Source>")
                 end
-                if inside_source and line:match("</Source>") then
-                  inside_source = false
+                if inside_source and line:match("</Source>") then -- "<Source" closed, thus...
+                  inside_source = false -- Flip back to false.
                   debug_print("Exited <Source>")
                 end
-                if inside_source and line:match("<Playlist") then
-                  inside_playlist = true
+                if inside_source and line:match("<Playlist") then -- Entering a "<Playlist" area(!), thus...
+                  inside_playlist = true -- Flip to true.
                   debug_print("Capturing <Playlist>")
                   table.insert(parent_playlist, line)
                 end
               elseif inside_playlist then
-                table.insert(parent_playlist, line)
-                if line:match("</Playlist>") then
+                table.insert(parent_playlist, line) -- Save the "<Playlist" area lines until...
+                if line:match("</Playlist>") then -- The "<Playlist" area is closed, thus...
                   debug_print("Completed <Playlist> block.")
-                  table.concat(parent_playlist, "\n")
-                  playlist_captured = true
+                  playlist_captured = true -- Note that our needed lines have been (likely) captured!
                 end
               end
             end
           
-            f:close()
-            return table.concat(parent_playlist, "\n")
+            f:close() -- Close the XML file we've been parsing.
+            return table.concat(parent_playlist, "\n") -- Concatenate and return the lines.
           end
 
           -- Establish a path to the XML currently in use:
@@ -1356,17 +1367,17 @@ function factory() return function()
             --debug_print(parent_block)
           end
 
-          -- Establish separate child blocks from the parent's XML playlist:
+          -- Now establish separate child blocks from the parent's XML playlist:
           local child_blocks = {}
           local i = 0
           for block in parent_block:gmatch("<Region.-</Region>") do
             i = i + 1
-            if i > current_siblings_total then break end
+            if i > current_siblings_total then break end -- I think sometimes duplicates (-a repeat of the 'siblings'-) were present, so just skip them if so.
             table.insert(child_blocks, block)
             debug_print("Creating child block...")
           end
 
-          if #child_blocks == 0 then
+          if #child_blocks == 0 then -- Something went wrong somehow, therefore fallback to:
             return "Undetermined", 64, 64, "Undetermined", "Undetermined", "Undetermined", "Undetermined", "Undetermined", "Undetermined", "Undetermined", "Undetermined", "Undetermined"
           else
             debug_print("Successfully extracted child blocks!")
@@ -1386,8 +1397,8 @@ function factory() return function()
             local fade_out_spl, fade_out_shape, fade_out_is_legacy = analyze_fade_events(fadeout_block, "FadeOut")
 
             -- Get fade_in/out_type (Normal or Legacy)
-            local fade_in_type = fade_in_is_legacy and "Legacy" or "Normal"
-            local fade_out_type = fade_out_is_legacy and "Legacy" or "Normal"
+            local fade_in_type = (fade_in_is_legacy == "Undetermined") and "Undetermined" or (fade_in_is_legacy and "Legacy" or "Normal")
+            local fade_out_type = (fade_out_is_legacy == "Undetermined") and "Undetermined" or (fade_out_is_legacy and "Legacy" or "Normal")
 
             -- Get fade states:
             local fade_in_state = "Undetermined"
@@ -1435,7 +1446,7 @@ function factory() return function()
             if xml_pre_child_id ~= "Undetermined" then
               debug_print("xml_pre_child_id is NOT Undetermined. -Proceeding to finding xml_pre_child_layering_index...")
               for region_block in regions:gmatch("<Region.->") do
-                local is_nested = region_block:match("<NestedSource>") -- We need to now AVOID NestedSource ones, because those will NOT be the original (pre-)children!
+                local is_nested = region_block:match("<NestedSource>") -- We need to now AVOID NestedSource ones, because those will NOT be the original pre-children!
                 local matches_id = region_block:match('id="' .. xml_pre_child_id .. '"')
                 if not is_nested and matches_id then
                   debug_print("Attempting to find matching layering_index in appropriate block...")
@@ -1474,7 +1485,7 @@ function factory() return function()
         local parent_ar = parent_region and parent_region:to_audioregion()
         local parent_name = parent_ar and parent_ar:name() or "Undetermined"
 
-        local original_parent_name = parent_name:match("(.+)%.[^%.]+$") or "Undetermined" -- NEW.
+        local original_parent_name = parent_name:match("(.+)%.[^%.]+$") or "Undetermined"
 
         -- Now immediately call the previous function...
         -- Collect all 12 field results per child region in the current sibling group:
@@ -1489,7 +1500,7 @@ function factory() return function()
         
         -- Sort the new, temp. table based on field 12 here (xml_pre_child_layering_index):
         table.sort(combined, function(a, b)
-          local la = tonumber(a.data[12]) or 9999 -- Default to some high number if something went wrong. --------------
+          local la = tonumber(a.data[12]) or 9999 -- Default to some high number if something went wrong.
           local lb = tonumber(b.data[12]) or 9999
           return la < lb
         end)
@@ -1547,7 +1558,7 @@ function factory() return function()
           local is_compound_parent = is_compound and "Parent" or "NotParent"
           local parent_id          = is_compound and r:to_stateful():id():to_s() or "Irrelevant"
 
-          local is_compound_child = "Child"
+          local is_compound_child = "Child" -- All here are children of course.
           local childs_parents_id = current_parent_id
 
           local id = r:to_stateful():id():to_s()
@@ -1579,7 +1590,7 @@ function factory() return function()
           local sibling_number = tostring(idx) -- Since current_siblings is now sorted by xml_pre_child_layering_index info., we can simply set each sibling's number like so.
           local compound_layer = string.format("Layer%d", child_layer)
 
-          -- Insert any parent_id into need_children_of_layer[child_layer + 1] (i.e. the next child layer to process):
+          -- Insert any parent_id into need_children_of_layer[child_layer + 1] (i.e. the next child layer to process, if required):
           if is_compound then
             table.insert(need_children_of_layer[child_layer + 1], parent_id)
           end
@@ -1646,7 +1657,7 @@ function factory() return function()
 
         end -- Ends "for idx, r in ipairs(current_siblings) do".
       end -- Ends "for _, current_parent_id in ipairs(input_parents) do"
-    end -- Ends the process_child_layer function.
+    end -- Ends the 'massive' process_child_layer function.
 
     if debug_pause and debug_pause_popup("Copy STEP 4: Prepare for Additional Looping (for Any Compound/Combined/Parent-Regions") then return end
 
@@ -1663,7 +1674,7 @@ function factory() return function()
     local child_layer = 1
 
     -- Start this off by making sure need_children_of_layer[child_layer] isn't simply nil...
-    -- Also, I capped-it-off at an arbitrary 50 child-layers deep, assuming no one will EVER reach that, haha @____@:
+    -- Also, I capped-it-off at an arbitrary 50 child-layers deep, assuming no one will ever, EVER reach that, haha @____@:
     while need_children_of_layer[child_layer] and #need_children_of_layer[child_layer] > 0 and child_layer < 50 do
 
       -- Process and store siblings in tsv1_entries_by_layer[child_layer]:
@@ -1733,7 +1744,7 @@ function factory() return function()
     debug_print("-------------- Copy STEP 6: Finalize TSV1 and Alert the User Accordingly --------------")
 
     -- Write final entries to AudioClipboard.tsv:
-    if siblings_manifested then
+    if siblings_manifested then -- If no combined/compound regions were ever present, siblings_manifested will still be true (-true was the default).
       flush_tsv1(tsv1_entries)
     end
 
@@ -5150,7 +5161,7 @@ function factory() return function()
 
   if action == "paste" then
 
-    -- Save the session; precautionary; just in case something goes wrong and Ardour crashes somehow (which seems very, very, very unlikely here)):
+    -- Save the session; precautionary; just in case something goes wrong and Ardour crashes somehow (-which seems very, very, very unlikely here):
     Session:save_state("", false, false, false, false, false)
 
     -- Establish our paths to our TSV files:
@@ -5420,11 +5431,11 @@ function factory() return function()
 
     if debug_pause and debug_pause_popup("Paste STEP 2: Check if TSV Information is Likely Usable/Valid") then return end
 
-    -------------------------------------------------------------------------------------------------------------------------
-    ------------------------- Paste STEP 3: Alert the User About Legacy or Undetermined Fade Shapes -------------------------
-    -------------------------------------------------------------------------------------------------------------------------
+    -----------------------------------------------------------------------------------------------------------------------------
+    ------------------------- Paste STEP 3: Alert the User About Legacy and/or Undetermined Fade Shapes -------------------------
+    -----------------------------------------------------------------------------------------------------------------------------
 
-    debug_print("-------------- Paste STEP 3: Alert the User About Legacy or Undetermined Fade Shapes --------------")
+    debug_print("-------------- Paste STEP 3: Alert the User About Legacy and/or Undetermined Fade Shapes --------------")
 
     -- Scan for "Legacy" fades that were successfully converted (i.e. where shape does NOT = "Undetermined")...
     -- Also, check for any "Undetermined" fade shapes:
@@ -5496,7 +5507,7 @@ function factory() return function()
 
     -- All pre-checks passed! CONGLATURATION ! ! !
 
-    if debug_pause and debug_pause_popup("Paste STEP 3: Alert the User About Legacy or Undetermined Fade Shapes") then return end
+    if debug_pause and debug_pause_popup("Paste STEP 3: Alert the User About Legacy and/or Undetermined Fade Shapes") then return end
 
     -----------------------------------------------------------------------------------------------
     ------------------------- Paste STEP 4: Define Any Remaining Fuctions -------------------------
