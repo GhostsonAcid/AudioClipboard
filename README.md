@@ -36,7 +36,7 @@ AudioClipboard _(AudioClipboard.lua)_ is a Lua script designed to be run in the 
 > [!WARNING]
 > - Due to the way in which AudioClipboard pastes regions, this script has the potential to disturb/destroy **automation curves** (-plugin/fader/pan/etc.) on a track if the setting _"Move relevant automation when audio regions are moved" (-under Preferences → Editor)_ is NOT disabled during Pasting. **This is especially true for pasting combined regions.** ***→ So PLEASE be sure to DISABLE that setting BEFORE using AudioClipboard!***
 
------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------
 
 ## Installation
 
@@ -73,7 +73,7 @@ Simply download the [AudioClipboard.lua](https://github.com/GhostsonAcid/AudioCl
 > [!TIP]
 > You can always just click any empty shortcut button in the top-right, hit "Refresh", and then find and set AudioClipboard from the dropdown menu!  Also, to remove a shortcut from a button, hold shift and then right-click it.
 
------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------
 
 ## How to use AudioClipboard
 
@@ -103,7 +103,7 @@ With that same (or whichever) audio track selected, use the **"Paste Regions"** 
 
 ***~Done!***
 
------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------
 
 ## AudioClipboard Examples (and Accuracy)
 
@@ -127,6 +127,9 @@ With that same (or whichever) audio track selected, use the **"Paste Regions"** 
 - Compound State (-Whether the region is a combined one or not; these are handled dramatically differently, but still as accurately as possible.)
 - Region Layering _([→ See Example 2 below...](#example-22))_
 
+> [!NOTE]
+> The only data that AudioClipboard does NOT currently duplicate are _transient markers._  Hopefully soon this will be implemented.
+
 ### Example 1/2
 
 Here is an example of AudioClipboard's pasting accuracy in action (→ with arrows highlighting all of the identical features):
@@ -139,7 +142,7 @@ AudioClipboard even reconstructs complicated (and nonsensical) region layering w
 
 ![AudioClipboard Copy Paste Accuracy Example 2](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Copy_Paste_Accuracy_Example_2.png)
 
------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------
 
 ## Use Cases and Other Features
 
@@ -180,7 +183,7 @@ As an extension of what manual file selection can do, you can also fix broken/mi
 
 #### 3. And then simply copy, pre-paste, and paste via AudioClipboard as described earlier!
 
------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------
 
 ## Technical Information
 
@@ -188,34 +191,38 @@ As an extension of what manual file selection can do, you can also fix broken/mi
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In a nutshell, Audio Clipboard works by externally logging all relevant and available data for the copied regions into a file called "AudioClipboard.tsv" in a temporary folder offered by your computer.  Then, during Pre-Paste, it scans for already-present, usable sources, creates a local 'Region ID Cache' (-another, more permanent .tsv file located in your project's `interchange/` directory), and ultimately 'imports'/embeds the remaining sources needed for successful pasting.  And finally, during Pasting, it then clones new audio regions into existence via IDs provided by the local cache, and then utilizes the data in AudioClipboard.tsv to apply all of the saved, original traits to the clones to recreate the copied regions accordingly.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For further detail, I've included hundreds of --muted notes all throughout the script itself, describing each step of the process in oftentimes considerable detail.  Although I now have something like 100-150 pages of hand-writen notes and typed-up documents describing the logic, flow, and structure of various parts of AudioClipboard, I decided it was best to simply incorporate notes and descriptions directly into the script itself (as is common), for myself down the road, as well as any others who might be interested (or those looking to address a bug or two).
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For further detail, I've included hundreds of --muted notes all throughout the script itself, describing each step of the process in oftentimes considerable detail.  Although I now have something like 100-150 pages of hand-writen notes and typed-up documents describing the logic, flow, and structure of various parts of AudioClipboard, I decided it was best to simply incorporate notes and descriptions directly into the script itself (as is common), for myself down the road, as well as any others who might be interested (or those looking to address a bug or two and/or offer suggestions, etc.).
 
 ### The Pre-Paste Process
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;At the heart of AudioClipboard is what happens during the "Pre-Paste" process.  Depending on where copied region's sources are located on your computer, the sources that are 'pre-pasted' must be handled uniquely.  Instead of letting Ardour just blindly import (and convert to .wav) any and all source files into each project's `audiofiles/` folder, I decided to take the approach of preserving region-to-source relationships as close to 1:1 as possible.  Thus, for example, if a copied region is coming from a source that is _embedded,_ then when that same source is 'pre-pasted' into a different session, that particular source will be embedded there as well, _-not imported._  Similarly, if a copied region's source is coming from a standard %L/%R (.wav) file pair already imported into the project, then that pair will be duplicated into the other session's `audiofiles/` folder accordingly thus, again, preserving the original region-to-source relationships. And so on...
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;At the heart of AudioClipboard is what happens during the "Pre-Paste" process.  Depending on where copied region's sources are _located_ on your computer as well as what _type_ of file(s) they are, the sources that are 'pre-pasted' must be handled uniquely.  Instead of letting Ardour just blindly import (and convert to .wav) any and all source files into each project's `audiofiles/` folder, I decided to take the approach of preserving region-to-source relationships as close to 1:1 as possible.  Thus, for example, if a copied region is coming from a source that is _embedded,_ then when that same source is 'pre-pasted' into a different session, that particular source will be embedded there as well, _-not imported._  Similarly, if a copied region's source is coming from a standard %L/%R (.wav) file pair already imported into the project, then that pair will be duplicated into the other session's `audiofiles/` folder accordingly thus, again, preserving the original region-to-source relationships. And so on...
 
 Here is a diagram depicting the flow of this Pre-Paste 'decision-making' process:
 
 ![Pre-Paste Flowchart](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Pre-Paste_Flowchart.jpg)
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;As a technical side-note, you might notice in the picture above that I never actually use _do_import_ (-Ardour's import command-) ever once.  Instead, I have opted for more control by directly duplicating source files into `audiofiles/` of the destination session, and then using _do_embed_ upon them.  This essentially mimics the do_import action, yet affords AudioClipboard precise naming control so that, for example, legacy 'dual-mono' pairs that use -L/-R endings instead of modern %L/%R ones can be upgraded appropriately in the process, thus _Guitar_take14-L.wav_ is renamed to → _Guitar_take14%L.wav_ during duplication/'importing' (-if and only if it's actually a part of a dual-mono pair, of course).
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(As a technical side-note, you might notice in the picture above that I never actually use _do_import_ ever once.  Instead, I have opted for more control by directly duplicating source files into `audiofiles/` of the destination session, and then using _do_embed_ upon them.  This essentially mimics the do_import action, yet affords AudioClipboard precise naming control so that, for example, legacy 'dual-mono' pairs that use -L/-R endings instead of modern %L/%R ones can be upgraded appropriately in the process, thus _Guitar_take14-L.wav_ is renamed to → _Guitar_take14%L.wav_ during duplication/'importing' (-if and only if it's actually a part of a dual-mono pair, of course).)
+
+--------------------------------------------------
 
 ## Requests and Future Developement
 
 To streamline and improve the reliability of AudioClipboard in general, it would be nice for the developers of Ardour to implement/expose the following Lua bindings, and address the following problems:
 
 ### 1. Fade-related bindings:
-- get_fade_in_length
-- get_fade_out_length
-- get_fade_in_shape
-- get_fade_out_shape
+- 'get_fade_in_length'
+- 'get_fade_out_length'
+- 'get_fade_in_shape'
+- 'get_fade_out_shape'
 
 > [!NOTE]
 > Acquiring and passing fade _lengths_ to Lua should be relatively easy.  But when it comes to _shapes,_ I have encountered many projects where fade shapes currently in use are NOT one of the five standard shapes (i.e. FadeLinear, FadeFast, etc.)!  This is fascinating to me, but perhaps one of the reasons why 'get_fade_in/out_shape' bindings have yet to be exposed?
 
 ### 2. A binding to enable/disable _"Move relevant automation when audio regions are moved"._
 
-### 3. Fix the [combined region handling bugs](https://tracker.ardour.org/view.php?id=9947).
+### 3. A binding to place transients on audio regions.
+
+### 4. Fix the [combined region handling bugs](https://tracker.ardour.org/view.php?id=9947).
 
 > [!NOTE]
 > To recap, after a use of Uncombine upon a combined region (the original or a duplicate), Ardour often fails to recreate accurate and original:
@@ -227,7 +234,7 @@ To streamline and improve the reliability of AudioClipboard in general, it would
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Although it's not strictly a priority for me personally, I would still like AudioClipboard to handle combined/compound regions with the utmost confidence.  But until those Ardour-side bugs are resolved, there is little more I can improve upon. (-Much direct, XML (.ardour) file parsing was implemented to scan for most of those data fields.  For now this works _okay,_ -but not _all_ of the time.  At the end of the day, direct XML scanning is considered by me to be a temporary, hacky solution to the Ardour deficiencies at hand.)
 
------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------
 
 ## Final Notes
 
@@ -236,7 +243,7 @@ To streamline and improve the reliability of AudioClipboard in general, it would
 AudioClipboard has been tested thoroughly on macOS Mojave running multiple copies of Ardour 8.12, as well as a VM of Ubuntu Studio.  If for some reason it doesn't work on your particular OS, please let me know.
 
 > [!IMPORTANT]
-> If you experience any bugs with this script, please submit an "Issue" here on GitHub, or post about it/them on the Ardour forum (discourse.ardour.org) and link @GhostsonAcid in your comment, and I will try to address it.
+> If you experience any bugs with this script, please submit an "Issue" here on GitHub, or post about it/them on [the Ardour forum](discourse.ardour.org) and link [@GhostsonAcid](https://discourse.ardour.org/u/ghostsonacid/summary) in your comment, and I will try to address it.
 
 ### Help
 
@@ -249,12 +256,12 @@ For more information on using Lua scripts in Ardour, you can visit [the Ardour m
 ***Thanks to @izlence*** for establishing the basic premise for AudioClipboard with their [ardour-scripts](https://github.com/izlence/ardour-scripts) GitHub project! 👍 -And of course Paul and Robin and many others for developing Ardour, and for addressing my endless questions/comments/concerns on the forum and chat!
 
 And thank <ins>you</ins> _(-whoever you are-)_ for reading!\
-I hope this script can help at least a few others out there as much as it has already helped me!
+I hope this script can help you work on whatever it is you're working on.
 
------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------
 
 _Remember: **It all goes back to music...**_\
-🎵 FOCUS ON THE MUSIC! 🎵
+Now if you'll excuse me, I've got to (try to) get back to editing/mixing my album...
 
 _~Enjoy!_
 
