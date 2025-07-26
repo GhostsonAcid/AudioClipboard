@@ -6,7 +6,7 @@ ardour {
   description = [[       This script lets you copy and paste selected mono and
   stereo audio regions between project sessions/snapshots,
   with almost all original region data being preserved in the
-  process. (v1.0) (2025-07-25)]]
+  process. (v1.1 PRE-RELEASE)]]
 }
 
 -- Draw a custom clipboard icon:
@@ -314,6 +314,12 @@ function factory() return function()
       return 64, "Undetermined", "Undetermined"
     end
 
+    -- Here are some examples of the "events" data we're about to parse, FYI:
+    -- a6400 0.047581917240722742
+    -- a19200 0.095056046128510166
+    -- a32000 0.14231484248572931 ...
+
+    -- Now gather the 'positions' (aNNNNN...) and values (from 0 to 1) in the events data-set into two separate tables:
     local positions = {}
     local values = {}
     for time_str, val_str in events:gmatch("a(%d+)%s+([%d%.eE+-]+)") do
@@ -321,11 +327,27 @@ function factory() return function()
       table.insert(values, tonumber(val_str))
     end
 
-    -- Fade length calculation (in samples):
-    local last_pos = positions[#positions]
-    local sr = Session:nominal_sample_rate()
-    local units_per_sample = 282240000 / sr ---------------------------------------------------------
-    local fade_length = last_pos and math.floor(last_pos / units_per_sample + 0.5) or 64 -- Fallback to the minimum standard of 64 samples if something went wrong...
+    -- Some notes on fade-length determination/calculation:
+    -- The XML (.ardour) files do NOT record fade-length data in terms of number of samples.  Instead (and according to my careful
+    -- examination), it seems that Ardour is ultimately using different numbers of 'units' per sample based on the session's sample rate:
+    -- 44,100 kHz --> uses 6,400 'units' per sample.
+    -- 48,000 kHz --> uses 5,880 'units' per sample.
+    -- 96,000 kHz --> uses 2,940 'units' per sample.
+    -- Etc...
+    -- -And all of those (for whatever reason) seem to relate back to 44,100 * 6,400, which = 282,240,000 (-i.e. the amount of these 'units', per second
+    -- of audio @ 44,100).  So then if you take 282,240,000 and do: 282,240,000 / (current sample rate), you get the numbers/rates/'units' described above.
+    -- ...
+    -- Thus, we now take the final fade value we found in the XML events, and establish/calculate the following terms:
+    local last_position = positions[#positions] -- The last unit value in the set of values (-our number we start with to ultimately get the length in samples).
+    local sample_rate = Session:nominal_sample_rate()
+    local units_per_sample = 282240000 / sample_rate -- Again, 282,240,000/44,100 = 6,400 ... etc ...
+
+    -- And now calculate the fade_length in samples:
+    local fade_length = last_position and math.floor(last_position / units_per_sample) or 64 -- Fallback to the minimum standard of 64 samples if something went wrong...
+
+    if fade_length < 64 then -- If somehow it's less than Ardour's minimum (i.e. something went wrong), then...
+      fade_length = 64 -- Fallback to 64 samples.
+    end
 
     -- Fade-shape determination/inferring begins (-this logic was actually pretty fun to setup):
     local shape = "Undetermined" -- Initial placeholder.
@@ -384,7 +406,7 @@ function factory() return function()
       shape = "Undetermined" -- Same as ^...
     end
 
-    debug_print(string.format("Fade %s - %d pts -> %s, LastPos: %s, Legacy: %s", label, count, shape, tostring(last_pos), tostring(is_legacy)))
+    debug_print(string.format("Fade %s - %d pts -> %s, LastPos: %s, Legacy: %s", label, count, shape, tostring(last_position), tostring(is_legacy)))
     return fade_length, shape, is_legacy
   end
 
@@ -400,7 +422,7 @@ function factory() return function()
   
   ::show_main_dialog::
 
-  local main_dialog = LuaDialog.Dialog("AudioClipboard (v1.0)", {
+  local main_dialog = LuaDialog.Dialog("AudioClipboard (v1.1 PRE-RELEASE)", {
     {
       type = "dropdown",
       key = "main_action",
@@ -1422,15 +1444,16 @@ function factory() return function()
             if envelope_block and not envelope_block:match('<Envelope%s+default="yes"%s*/>') then
               local ev = envelope_block:match("<events>(.-)</events>")
               if ev then
-                -- Some fancy math to adjust the envelope values as shown in the xml to something useful (i.e. --> samples): --------------
-                local sr = Session:nominal_sample_rate()
-                local units_per_sample = 282240000 / sr
+
+                -- PLEASE SEE THE NOTES AT AROUND LINE 340 for more details on this math/approach:
+                local sample_rate = Session:nominal_sample_rate()
+                local units_per_sample = 282240000 / sample_rate
                 local points = {}
                 for line in ev:gmatch("[^\r\n]+") do
-                  local a_val, amp_val = line:match("a(%d+)%s+([%d%.eE+-]+)")
+                  local a_val, amp_val = line:match("a(%d+)%s+([%d%.eE+-]+)") -- a_val is the value of 'units' (-time position); amp_val is the 'amplitude' value (from 0 to 1).
                   if a_val and amp_val then
-                    local sample_pos = math.floor(tonumber(a_val) / units_per_sample + 0.5)
-                    table.insert(points, string.format("%d:%.6f", sample_pos, tonumber(amp_val)))
+                    local sample_position = math.floor(tonumber(a_val) / units_per_sample)
+                    table.insert(points, string.format("%d:%.6f", sample_position, tonumber(amp_val))) -- Insert the position (time) + amp value data for the data point.
                   end
                 end
                 envelope = table.concat(points, ",")
