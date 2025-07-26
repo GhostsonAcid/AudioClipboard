@@ -1717,12 +1717,19 @@ function factory() return function()
       -- Sort and inject children directly before each relevant parent...
       -- The specific ordering we set here (ultimately into TSV1) is what makes pasting a relative breeze later on:
       for _, line in ipairs(tsv1_entries_by_layer[child_layer]) do
+
         local fields = {}
         for field in string.gmatch(line, "[^\t]+") do
           table.insert(fields, field)
         end
         local parent_id = fields[38] -- Field 38 = childs_parents_id
-        local layering_index = tonumber(fields[42]) -- Field 42 = xml_pre_child_layering_index
+        local layering_index = tonumber(fields[42]) or "Undetermined" -- Field 42 = xml_pre_child_layering_index.
+
+        if layering_index == "Undetermined" then
+          layering_index = 0 -- Fallback to a number (0) if xml_pre_child_layering_index was nil or Undetermined!
+          debug_print("The xml_pre_child_layering_index was undetermined/nil! --> Falling back to 0...")
+        end
+
         if not children_by_parent_id[parent_id] then
           children_by_parent_id[parent_id] = {}
         end
@@ -5264,7 +5271,7 @@ function factory() return function()
         
         if #fields == 45 then
           -- Insert all the necessary fields for successful pasting (into "clipboard")...
-          -- If you want some basic info about any of these, check around line 60 towards the top of this script:
+          -- If you want some basic info about any of these, check around line 140 towards the top of this script:
           table.insert(clipboard, {
             used_channel_count   = fields[3],
             used_channel_type    = fields[4],
@@ -5375,28 +5382,31 @@ function factory() return function()
 
     -- Check if any IDs in TSV2 cannot actually be restored by "RegionFactory":
     for _, entry in ipairs(clipboard) do
-      local key = string.format("%s|%s|%s|%s",
-        entry.used_channel_count,
-        entry.used_channel_type,
-        entry.original_source_path,
-        entry.final_source_path
-      )
+      if entry.is_compound_parent == "NotParent" then -- Skip all parent/combined/compound regions here (-which have no matching TSV2 entries with IDs in and of themselves).
 
-      local id_list = id_map[key]
-      local found_valid = false
+        local key = string.format("%s|%s|%s|%s",
+          entry.used_channel_count,
+          entry.used_channel_type,
+          entry.original_source_path,
+          entry.final_source_path
+        )
 
-      if id_list then
-        for _, id in ipairs(id_list) do
-          local r = ARDOUR.RegionFactory.region_by_id(PBD.ID(id)) -- Check if RegionFactory returns a valid region.
-          if r and not r:isnil() then
-            found_valid = true -- We only need one ID to work.
-            break
+        local id_list = id_map[key] -- Get the list of IDs (given ^that specific key) from the id_map we established earlier...
+        local found_valid = false
+
+        if id_list then
+          for _, id in ipairs(id_list) do
+            local r = ARDOUR.RegionFactory.region_by_id(PBD.ID(id)) -- Check if RegionFactory returns a valid region for any ID...
+            if r and not r:isnil() then
+              found_valid = true -- We only need one ID to work, thus...
+              break -- Stop the loop.
+            end
           end
         end
-      end
 
-      if not found_valid then
-        table.insert(missing_sources, entry.final_source_path) -- Insert any missing/invalid sources into missing_sources.
+        if not found_valid then
+          table.insert(missing_sources, entry.final_source_path) -- Insert any missing/invalid sources into missing_sources.
+        end
       end
     end
 
@@ -5788,8 +5798,8 @@ function factory() return function()
         -- If a parent must be manifested from a child/siblings group, and then processed:
         if divert_to_combine_siblings then
 
-          -- If in debug mode, this interrupts each combine_siblings call so you can inspect the child regions for accuracy before they're combined:
-          if debug then
+          -- If debug_pause = true, this interrupts each combine_siblings call so you can inspect the child regions for accuracy before they're combined:
+          if debug_pause then
             local opts = {
               { type = "heading", title = "Interrupting the combining of sibling regions for inspection..." },
               { type = "heading", title = string.format("Layer: %s | Total Current Siblings: %d", tostring(current_layer), #siblings_by_layer[current_layer] or 0) },
