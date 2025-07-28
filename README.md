@@ -233,6 +233,8 @@ To streamline and improve the reliability of AudioClipboard in general, it would
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Although it's not strictly a priority for me personally, I would still like AudioClipboard to handle combined/compound regions with the utmost confidence.  But until those Ardour-side bugs are resolved, there is little more I can improve upon. (-Much direct, XML (.ardour) file parsing was implemented to scan for most of those data fields.  For now this works _okay,_ -but not _all_ of the time.  At the end of the day, direct XML scanning is considered by me to be a temporary, hacky solution to the Ardour deficiencies at hand.)
 
+### 5. A binding to save a track/bus template.
+
 --------------------------------------------------
 
 ## Final Notes
