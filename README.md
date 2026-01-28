@@ -2,7 +2,7 @@
 
 ## Basic Description
 
-AudioClipboard _(AudioClipboard.lua)_ is a Lua script designed to be run in the Ardour DAW (v8.12+) that allows one to copy and paste mono and stereo audio regions between projects/sessions/snapshots, whilst maintaining virtually all of the region data in the process.
+AudioClipboard _(AudioClipboard.lua)_ is a Lua script designed to be run in the Ardour DAW (v8.12+) (but also works in Harrison Mixbus 11+) that allows one to copy and paste mono and stereo audio regions between projects/sessions/snapshots, whilst maintaining virtually all of the region data in the process.
 
 ![AudioClipboard Opening Window](https://github.com/GhostsonAcid/AudioClipboard/blob/main/Images/AudioClipboard_Opening_Window.png)
 
@@ -150,7 +150,7 @@ The following are examples of some useful things you can achieve using AudioClip
 ### Manually Select Files To Use
 
 Beyond basic copying and pasting, manually selecting which sources to use for pasting is perhaps the single best feature in AudioClipboard. There are many situations where this can come in handy:
-- A project's Source List might be cluttered with duplicate entries, and you'd like to clean it up.
+- A project's Source List might be cluttered with duplicate entries, and you'd like to clean it up (→ by redirecting regions to single, shared sources, and then deleting the duplicates).
 - You might be working with lower-quality sources (-like compressed MP3s), but now you wish to 'swap them out' for better sources while maintaining all of the original envelope, gain, trimming, etc..
 - You might also just prefer having certain regions link to sources located in a new/different/updated folder (or even a different SSD/HDD).
 - You have already edited (e.g. cut, trimmed, positioned, etc.) a full, combined drum mix recording, but you realize you actually have access to the individual drum stem files, and now you wish to apply all that same editing to every stem recording in the group.
@@ -232,6 +232,8 @@ To streamline and improve the reliability of AudioClipboard in general, it would
 > - Original region layering (i.e. "layering index" info).
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Although it's not strictly a priority for me personally, I would still like AudioClipboard to handle combined/compound regions with the utmost confidence.  But until those Ardour-side bugs are resolved, there is little more I can improve upon. (-Much direct, XML (.ardour) file parsing was implemented to scan for most of those data fields.  For now this works _okay,_ -but not _all_ of the time.  At the end of the day, direct XML scanning is considered by me to be a temporary, hacky solution to the Ardour deficiencies at hand.)
+
+### 5. A binding to save a track/bus template.
 
 --------------------------------------------------
 
