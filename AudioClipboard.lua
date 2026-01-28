@@ -256,13 +256,14 @@ function factory() return function()
         end
 
       -- Match -digits:
-      elseif stem:sub(i - 1, i - 1) == "-" and stem:sub(i, i):match("%d") then
+      elseif stem:sub(i, i):match("%d") then
         local j = i
         while j > 0 and stem:sub(j, j):match("%d") do
           j = j - 1
         end
         if stem:sub(j, j) == "-" then
-          suffix = stem:sub(j, i) .. suffix
+          local numchunk = stem:sub(j, i)
+          suffix = numchunk .. suffix
           i = j - 1
           matched = true
         end
