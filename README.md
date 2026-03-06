@@ -128,7 +128,7 @@ With that same (or whichever) audio track selected, use the **"Paste Regions"** 
 - Region Layering _([→ See Example 2 below...](#example-22))_
 
 > [!NOTE]
-> Again, to my knowledge the only data that AudioClipboard does NOT currently recreate are _transient markers._
+> Again, to my knowledge the only data that AudioClipboard does NOT currently recreate are _transient markers and 'RegionFX'/'Region Effects'!_
 
 ### Example 1/2
 
