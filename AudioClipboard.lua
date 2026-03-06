@@ -423,7 +423,7 @@ function factory() return function()
   
   ::show_main_dialog::
 
-  local main_dialog = LuaDialog.Dialog("AudioClipboard (v1.1 PRE-RELEASE)", {
+  local main_dialog = LuaDialog.Dialog("AudioClipboard (v1.1)", {
     {
       type = "dropdown",
       key = "main_action",
