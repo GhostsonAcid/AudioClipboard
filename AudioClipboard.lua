@@ -6,7 +6,7 @@ ardour {
   description = [[       This script lets you copy and paste selected mono and
   stereo audio regions between project sessions/snapshots,
   with almost all original region data being preserved in the
-  process. (v1.1 PRE-RELEASE)]]
+  process. (v1.1) (2026-03-06)]]
 }
 
 -- Draw a custom clipboard icon:
@@ -483,6 +483,8 @@ function factory() return function()
       "into existence via IDs provided by the local cache, and utilizes the data in AudioClipboard.tsv to apply all of the saved, " ..
       "original traits to the clones to recreate the copied regions accordingly.\n\n" ..
       "                                    Other Notes:\n\n" ..
+      "         Please be aware that currently AudioClipboard does NOT copy/paste original region transient markers, or ANY 'RegionFX'" ..
+      "/'Region Effects' used, the latter being a completely new feature to Ardour 9.  Hopefully in the future I will address this!\n\n" ..
       "         This script can be used in conjunction with Ardour's built-in track-template-creator (-right-click on an audio mixer " ..
       "strip's name, then use \"Save As Template...\") to achieve full track and region duplication from one session/snapshot into another.\n\n" ..
       "         Also, if you experience any bugs with this script, please submit an \"Issue\" on the GitHub page for AudioClipboard, and/or " ..
