@@ -4610,9 +4610,10 @@ function factory() return function()
                 dualmono_files,
                 Editing.ImportMergeFiles, -- Instruct Ardour to merge the pair as a single, stereo source.
                 Editing.ImportToTrack,
+                false, -- New transient-related argument in Ardour9; not needed, thus set to false.
                 Temporal.timepos_t(pos_samples),
                 ARDOUR.PluginInfo(),
-                track)              
+                track)
 
               region, id = region_diff(before_ids, playlist:region_list()) -- Get the new region ID by comparing our 'before snapshot' with what currently exists in the playlist.
               if not region then
@@ -4662,9 +4663,10 @@ function factory() return function()
                   dualmono_files,
                   Editing.ImportMergeFiles,
                   Editing.ImportToTrack,
+                  false, -- New transient-related argument in Ardour9; not needed, thus set to false.
                   Temporal.timepos_t(pos_samples),
                   ARDOUR.PluginInfo(),
-                  track)                
+                  track)
 
                 region, id = region_diff(before_ids, playlist:region_list())
                 if not region then
@@ -4773,6 +4775,7 @@ function factory() return function()
                 embed,
                 Editing.ImportAsTrack,
                 Editing.ImportToTrack, -- Now embed it.
+                false, -- New transient-related argument in Ardour9; not needed, thus set to false.
                 Temporal.timepos_t(pos_samples),
                 ARDOUR.PluginInfo(),
                 track)
@@ -4830,6 +4833,7 @@ function factory() return function()
                   embed,
                   Editing.ImportAsTrack,
                   Editing.ImportToTrack,
+                  false, -- New transient-related argument in Ardour9; not needed, thus set to false.
                   Temporal.timepos_t(pos_samples),
                   ARDOUR.PluginInfo(),
                   track)
@@ -4977,6 +4981,7 @@ function factory() return function()
                 embed,
                 Editing.ImportAsTrack,
                 Editing.ImportToTrack,
+                false, -- New transient-related argument in Ardour9; not needed, thus set to false.
                 Temporal.timepos_t(pos_samples),
                 ARDOUR.PluginInfo(),
                 track)
@@ -5019,9 +5024,10 @@ function factory() return function()
                   embed,
                   Editing.ImportAsTrack,
                   Editing.ImportToTrack,
+                  false, -- New transient-related argument in Ardour9; not needed, thus set to false.
                   Temporal.timepos_t(pos_samples),
                   ARDOUR.PluginInfo(),
-                  track)              
+                  track)
           
                 region, id = region_diff(before_ids, playlist:region_list())
                 if not region then
