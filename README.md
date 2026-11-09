@@ -33,7 +33,8 @@ AudioClipboard is a Lua script designed to be run in the Ardour DAW (v8.12+) tha
 - It doesn't work with anything MIDI, but this is okay because transferring MIDI regions is easy thanks to Ardour's built-in region export function _(-select the MIDI region, then click Region → Export...)._
 - It sometimes fails to properly handle combined/compound regions, mostly due to [known Ardour bugs](https://tracker.ardour.org/view.php?id=9947).
 - It can't (yet) recreate original _transient markers._ (-Hopefully this can be implemented soon.)
-- It can't (yet) recreate any 'RegionFX'/'Region Effects', which is [a brand-new feature](https://manual.ardour.org/mixing/automation/applying-effects-to-regions-separately/) in Ardour v9.
+- It can't (yet) recreate original _region cue markers._ (-Again, hopefully this can be implemented soon.)
+- It can't (yet) recreate any _'RegionFX'/'Region Effects',_ which is [a brand-new feature](https://manual.ardour.org/mixing/automation/applying-effects-to-regions-separately/) in Ardour v9.
 
 > [!WARNING]
 > - Due to the way in which AudioClipboard pastes regions, this script has the potential to disturb/destroy **automation curves** (-plugin/fader/pan/etc.) on a track if the setting _"Move relevant automation when audio regions are moved" (-under Preferences → Editor)_ is NOT disabled during Pasting. **This is especially true for pasting combined regions.** ***→ So PLEASE be sure to DISABLE that setting BEFORE using AudioClipboard!***
@@ -128,7 +129,7 @@ With that same (or whichever) audio track selected, use the **"Paste Regions"** 
 - Region Layering _([→ See Example 2 below...](#example-22))_
 
 > [!NOTE]
-> Again, to my knowledge the only data that AudioClipboard does NOT currently recreate are _transient markers and 'RegionFX'/'Region Effects'!_
+> Again, to my knowledge the only data that AudioClipboard does NOT currently recreate are _transient markers, region cue markers, and 'RegionFX'/'Region Effects'!_
 
 ### Example 1/2
 
