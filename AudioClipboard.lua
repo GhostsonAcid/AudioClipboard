@@ -890,24 +890,53 @@ function factory() return function()
 
         local f = io.open(xml_path, "r")
         -- Fallback to what Ardour's minimum fade-in/fade-out length is (64 samples), and the rest get "Undetermined":
-        if not f then return 64, 64, "Undetermined", "Undetermined", "Undetermined", "Undetermined" end
+        if not f then
+          debug_print(".ardour XML project file not found or openable!") 
+          return 64, 64, "Undetermined", "Undetermined", "Undetermined", "Undetermined"
+        end
         local xml = f:read("*all")
         f:close()
 
         -- Find (and establish a term for) the "<Playlists>" portion of the XML:
         local playlists = xml:match("<Playlists>(.-)</Playlists>")
-        if not playlists then return 64, 64, "Undetermined", "Undetermined", "Undetermined", "Undetermined" end -- Again, fallback.
-
-        local region_block = nil
-        for block in playlists:gmatch("<Region.->.-</Region>") do -- In the "<Playlists>" portion of the XML, look through "<Region" blocks...
-          local found_id = block:match('id="([^"]+)"') -- Look at the "id=" portion of each "<Region" block...
-          if found_id == region_id then -- If the found_id matches the region's ID (that we fed into this function), then...
-            region_block = block -- This is our block of interest.
-            break -- Immediately break out of the XML parsing.
-          end
+        if not playlists then
+          debug_print("<Playlists> portion of the XML not found!")
+          return 64, 64, "Undetermined", "Undetermined", "Undetermined", "Undetermined" -- Again, fallback.
         end
 
-        if not region_block then return 64, 64, "Undetermined", "Undetermined", "Undetermined", "Undetermined" end
+        --debug_print("PLAYLIST PORTION: " .. playlists)
+        debug_print("region_id: " .. region_id)
+
+        local region_block = nil
+        local search_from = 1
+
+        while true do
+            local tag_start, tag_end = playlists:find("<Region%s[^>]*>", search_from)
+            if not tag_start then
+                break
+            end
+        
+            local tag = playlists:sub(tag_start, tag_end)
+            local found_id = tag:match('id="([^"]+)"')
+        
+            if found_id == tostring(region_id) then
+                local close_start, close_end =
+                    playlists:find("</Region>", tag_end + 1, true)
+        
+                if close_start then
+                  region_block = playlists:sub(tag_start, close_end)
+                end
+        
+                break
+            end
+        
+            search_from = tag_end + 1
+        end
+
+        if not region_block then
+          debug_print("Specific region_block in the XML (given region_id) not found!")
+          return 64, 64, "Undetermined", "Undetermined", "Undetermined", "Undetermined"
+        end
 
         -- Establish the fade-in and fade-out 'sub-blocks' in the XML we want to scrap data from:
         local fadein_block = region_block:match("<FadeIn>.-<events>(.-)</events>")
